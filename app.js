@@ -9,7 +9,10 @@
   const addDays = (s, n) => { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10) };
   const ALLDAYS = []; for (let d = C.START; d <= C.END; d = addDays(d, 1)) ALLDAYS.push(d);
   const mode = d => C.LIGHT.some(r => d >= r[0] && d <= r[1]) ? 'light' : 'full';
-  const P = C.PLAYERS.map(p => ({ name: p.name, email: p.email.toLowerCase() }));
+  const SIL = c => 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="${c}"/><circle cx="50" cy="38" r="17" fill="#ece4d2"/><path d="M14 100c2-26 18-38 36-38s34 12 36 38z" fill="#ece4d2"/></svg>`);
+  const P = C.PLAYERS.map((p, i) => ({ name: p.name, email: p.email.toLowerCase(), photo: DEMO ? SIL(i ? '#8b8566' : '#3a3026') : (p.photo || '') }));
+  // Avatar: photo if it loads, otherwise the first letter.
+  const av = (p, s) => `<div class="av" style="--s:${s || 32}px">${p.photo ? `<img src="${esc(p.photo)}" alt="" onerror="this.remove()">` : ''}<span>${esc(p.name[0])}</span></div>`;
 
   // ---------- scoring ----------
   const engPts = l => Math.round(Math.min(l.english_min, 30) / 30 * 20);
@@ -48,7 +51,7 @@
   } else sb = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 
   async function guard() {
-    if (DEMO) return { name: P[0].name, email: P[0].email };
+    if (DEMO) return P[0];
     const { data } = await sb.auth.getSession();
     if (!data.session) { location.replace('login.html' + KEEP); return null }
     const email = (data.session.user.email || '').toLowerCase(), me = P.find(p => p.email === email);
@@ -86,10 +89,10 @@
       `<div class="brand"><span class="mark">${icon('logo', 16)}</span><span>Focus Quest</span></div><div class="links">` +
       items.map(x => `<a class="${x[1] === active ? 'on' : ''}" href="${x[0]}${KEEP}">${icon(x[2])}<span>${x[3]}</span></a>`).join('') +
       `<a href="#" id="lo" class="lo">${icon('out')}<span>Log out</span></a></div>` +
-      `<div class="me"><div class="av">${esc(me.name[0])}</div><div><b>${esc(me.name)}</b><small>${DEMO ? 'Demo data' : esc(me.email)}</small></div></div>`;
+      `<div class="me">${av(me, 38)}<div><b>${esc(me.name)}</b><small>${DEMO ? 'Demo data' : esc(me.email)}</small></div></div>`;
     document.getElementById('lo').onclick = e => { e.preventDefault(); logout() };
   }
   const dayNo = () => Math.min(Math.max(1, ALLDAYS.indexOf(TODAY) + 1), ALLDAYS.length);
   const daysLeft = () => Math.max(0, Math.round((new Date(C.END + 'T00:00:00Z') - new Date(TODAY + 'T00:00:00Z')) / 864e5));
-  window.FQ = { C, DEMO, KEEP, icon, TODAY, P, ALLDAYS, mode, dayPts, calc, esc, guard, fetchLogs, saveLog, login, logout, nav, dayNo, daysLeft, addDays };
+  window.FQ = { C, DEMO, KEEP, icon, av, TODAY, P, ALLDAYS, mode, dayPts, calc, esc, guard, fetchLogs, saveLog, login, logout, nav, dayNo, daysLeft, addDays };
 })();

@@ -3,14 +3,14 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Focus Quest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="shell">
   <nav class="nav" id="nav"></nav>
   <main class="main">
     <header class="head">
-      <div><h1 id="hi">Dashboard</h1><p class="sub" id="hsub"></p></div>
+      <div class="hello" id="hello"><div><h1 id="hi">Dashboard</h1><p class="sub" id="hsub"></p></div></div>
       <div id="count"></div>
     </header>
     <div id="banner"></div>
@@ -63,8 +63,8 @@ function setPrep(v){prep=v;document.querySelectorAll('#seg button').forEach(b=>b
 function render(logs){
  const S=P.map(p=>({...p,...calc(logs,p.email)})),meS=S.find(s=>s.email===me.email),other=S.find(s=>s.email!==me.email),
   rank=[...S].sort((a,b)=>b.tot-a.tot).findIndex(s=>s.email===me.email)+1,full=mode(TODAY)==='full',inRange=TODAY>=C.START&&TODAY<=C.END;
- $('hi').textContent=`Hi ${me.name}`;
- $('hsub').textContent=new Date(TODAY+'T00:00:00Z').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+ $('hello').innerHTML=`${FQ.av(me,60)}<div><h1>Hi, ${esc(me.name)}</h1><p class="sub" id="hsub"></p></div>`;
+ document.getElementById('hsub').textContent=new Date(TODAY+'T00:00:00Z').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
  $('count').innerHTML=TODAY<C.START?`<span class="badge">Starts <b>${C.START}</b></span>`:`<span class="badge">Day <b>${FQ.dayNo()}</b> of ${FQ.ALLDAYS.length} · <b>${FQ.daysLeft()}</b> days left</span>`;
  const st=meS.today?'<span class="badge ok">Logged</span>':'<span class="badge warn">Not logged</span>';
  const diff=meS.tot-other.tot;
@@ -79,7 +79,7 @@ function render(logs){
  $('board').innerHTML='<div class="srow shead"><span>Player</span><span>Points</span><span>Share</span><span>Streak</span><span>Best</span><span>Coding</span><span>English</span><span>Today</span></div>'+
   [...S].sort((a,b)=>b.tot-a.tot).map(s=>{const i=P.findIndex(p=>p.email===s.email),lead=S[0].tot!==S[1].tot&&s.tot===Math.max(S[0].tot,S[1].tot);
    const t=!inRange?'':(s.today?'<span class="badge ok">Logged today</span>':'<span class="badge warn">Not logged yet</span>');
-   return `<div class="srow" style="--c:${COL[i]}"><div class="pl"><div class="av">${esc(s.name[0])}</div><span>${esc(s.name)}${s.email===me.email?'<small>you</small>':''}${lead?'<span class="lead-tag">Leading</span>':''}</span></div>
+   return `<div class="srow" style="--c:${COL[i]}"><div class="pl">${FQ.av(s,34)}<span>${esc(s.name)}${s.email===me.email?'<small>you</small>':''}${lead?'<span class="lead-tag">Leading</span>':''}</span></div>
    <div class="num pts">${s.tot}</div><div class="bar"><i style="width:${Math.max(0,s.tot)/total*100}%"></i></div>
    <div class="meta"><span class="num">${s.streak} d<span class="lab"> streak</span></span><span class="num m4">${s.best} d</span><span class="num m4">${s.coding}</span><span class="num m4">${s.eng} m</span></div><div class="td">${t}</div></div>`}).join('');
  const q=quests();$('qsub').textContent=q.sub;

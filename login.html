@@ -3,13 +3,14 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Focus Quest · Log in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head><body class="auth">
   <div class="authcard">
     <div class="brand"><span class="mark" id="mk"></span><span>Focus Quest</span></div>
-    <h1>Log in</h1>
-    <p class="sub">Use the account you were given.</p>
+    <h1>Welcome back</h1>
+    <p class="sub">Pick your name, then enter your password.</p>
+    <div class="who" id="who"></div>
     <label style="margin-top:18px">Email</label><input id="email" type="email" autocomplete="username" inputmode="email">
     <label>Password</label><input id="pw" type="password" autocomplete="current-password">
     <button class="btn" id="go">Log in</button>
@@ -21,6 +22,8 @@
 <script>
 const $=id=>document.getElementById(id);
 $('mk').innerHTML=FQ.icon('logo',16);
+$('who').innerHTML=FQ.P.map(p=>`<button type="button" class="whob" data-e="${FQ.esc(p.email)}">${FQ.av(p,44)}<span>${FQ.esc(p.name)}</span></button>`).join('');
+document.querySelectorAll('.whob').forEach(b=>b.onclick=()=>{$('email').value=b.dataset.e;document.querySelectorAll('.whob').forEach(x=>x.classList.toggle('on',x===b));$('pw').focus()});
 async function go(){
   const m=$('msg');m.className='msg';m.textContent='Checking...';
   const {error}=await FQ.login($('email').value.trim(),$('pw').value);

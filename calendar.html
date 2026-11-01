@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Focus Quest · Calendar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="shell">
@@ -46,7 +46,7 @@ function render(logs){LOGS=logs;
   const dt=new Date(d+'T00:00:00Z'),first=d===C.START||dt.getUTCDate()===1;
   return `<div class="cd ${mode(d)==='light'?'light':''} ${d===TODAY?'today':''}"><b>${dt.getUTCDate()}</b><small>${first?dt.toLocaleDateString('en',{month:'short',timeZone:'UTC'}):''}</small><div class="dots">${dots}</div></div>`}).join('');
  $('cal').innerHTML=h;
- $('stats').innerHTML=S.map((s,i)=>`<div class="pstat" style="--c:${COL[i]}"><div class="top"><div class="av">${esc(s.name[0])}</div>${esc(s.name)}<span class="badge" style="margin-left:auto"><b>${s.tot}</b> pts</span></div><div class="grid"><div><b>${s.streak}</b>Streak</div><div><b>${s.best}</b>Best</div><div><b>${s.logged}</b>Logged</div><div><b>${s.missed}</b>Missed</div></div></div>`).join('');
+ $('stats').innerHTML=S.map((s,i)=>`<div class="pstat" style="--c:${COL[i]}"><div class="top">${FQ.av(s,34)}${esc(s.name)}<span class="badge" style="margin-left:auto"><b>${s.tot}</b> pts</span></div><div class="grid"><div><b>${s.streak}</b>Streak</div><div><b>${s.best}</b>Best</div><div><b>${s.logged}</b>Logged</div><div><b>${s.missed}</b>Missed</div></div></div>`).join('');
  hist()}
 (async()=>{
  const me=await FQ.guard();if(!me)return;FQ.nav('calendar',me);
