@@ -22,3 +22,6 @@ Honest logging only. Logging fake numbers just means losing on the actual test.
 2. Settings -> API: copy Project URL and anon key into `config.js`. Set player names.
 3. Push to GitHub. Settings -> Pages -> Deploy from branch `main` / root.
 4. Open `https://<user>.github.io/focus-quest/`.
+
+## Live site
+https://sanket1035.github.io/focus-quest/
