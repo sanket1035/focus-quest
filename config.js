@@ -1,8 +1,8 @@
 // Fill these after creating the Supabase project (Settings -> API).
 window.DUEL = {
-  SUPABASE_URL: "https://YOUR-PROJECT.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR-ANON-KEY",
-  PLAYERS: ["Sanket", "Player 2"],   // change Player 2 to her name
+  SUPABASE_URL: "https://fdejjgltpgnbtksjkqjv.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkZWpqZ2x0cGduYnRrc2prcWp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MDc3MjEsImV4cCI6MjEwOTA4MzcyMX0.aad8ECBmR6LLKggPgEaxAKQyTW88zOONb3dqaZi_ERQ",
+  PLAYERS: ["Sanket", "Purva"],   // change Player 2 to her name
   START: "2026-11-02",
   END: "2026-12-06",
   // English-only (30 min) days: colloquium, practicals, semester exams
