@@ -7,7 +7,7 @@ window.DUEL = {
     { name: "Sanket", email: "sanketchaudhari1035@gmail.com", photo: "img/sanket.png" },
     { name: "Purva",  email: "purvachopade1665@gmail.com",  photo: "img/purva.png" }
   ],
-  START: "2026-11-02",
+  START: "2026-11-01",
   END: "2026-12-06",
   // English-only (30 min) days: colloquium, practicals, semester exams
   LIGHT: [["2026-11-03","2026-11-04"],["2026-11-15","2026-11-20"],["2026-11-23","2026-12-04"]]
