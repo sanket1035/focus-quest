@@ -2,86 +2,185 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Focus Quest</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&family=Nunito:wght@400;600;700;800&family=Oswald:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--tx:#e6edf3;--mut:#8b949e;--a:#2f81f7;--b:#f778ba;--ok:#3fb950;--bad:#f85149}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif}
-.wrap{max-width:1000px;margin:auto;padding:24px 16px}
-h1{margin:0;font-size:28px;font-weight:800}.sub{color:var(--mut);margin:4px 0 24px}
-.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media(max-width:700px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-.p{display:flex;justify-content:space-between;align-items:center}.big{font-size:40px;font-weight:800}
-.lead{font-size:12px;padding:3px 8px;border-radius:99px;background:var(--ok);color:#000;font-weight:600}
-.bar{height:10px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:10px}.bar>i{display:block;height:100%}
-.stats{display:flex;gap:16px;color:var(--mut);font-size:13px;margin-top:10px;flex-wrap:wrap}
-label{display:block;font-size:13px;color:var(--mut);margin-top:10px}
-input,select,textarea{width:100%;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-button{margin-top:14px;width:100%;padding:11px;border:0;border-radius:8px;background:var(--a);color:#fff;font-weight:600;cursor:pointer}
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:7px;border-bottom:1px solid var(--line);text-align:left}
-.spark{display:flex;gap:3px;align-items:flex-end;height:60px;margin-top:12px}.spark i{flex:1;border-radius:3px 3px 0 0;min-height:2px}
-.msg{font-size:13px;margin-top:8px;color:var(--ok)}
+:root{--bg:#0a0e1f;--panel:#121832;--panel2:#171f40;--line:#262f58;--tx:#eef1ff;--mut:#8f9ac6;--p1:#38bdf8;--p2:#f472b6;--ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--sub:#0e1431;--sub2:#1b2452;--sub3:#1a1838;--inp:#0b1029;--dot:#2a3363;--on:#06101f;--r:20px;--font:Inter,system-ui,sans-serif;--hfont:var(--font);--tt:none;--bgimg:radial-gradient(900px 500px at 15% -10%,#1c2a66 0,transparent 60%),radial-gradient(800px 500px at 100% 0,#4a1d5c 0,transparent 55%);--grad:linear-gradient(135deg,var(--p1),#818cf8 55%,var(--p2));--bw:1px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--tx);background:var(--bgimg),var(--bg);min-height:100vh}
+.wrap{max-width:1040px;margin:auto;padding:20px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.logo i{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;font-style:normal}
+.pill{background:var(--panel);border:var(--bw) solid var(--line);border-radius:99px;padding:7px 14px;font-size:13px;color:var(--mut)}
+.pill b{color:var(--tx)}
+.banner{background:#3b2a07;border:1px solid #7a5a10;color:#fde68a;padding:9px 14px;border-radius:10px;font-size:13px;margin-top:14px}
+.arena{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch;margin-top:18px}
+.pc{background:linear-gradient(180deg,var(--panel2),var(--panel));border:var(--bw) solid var(--line);border-radius:var(--r);padding:20px;position:relative;overflow:hidden}
+.pc::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c)}
+.pc.lead{box-shadow:0 0 0 1px var(--c),0 10px 40px -10px var(--c)}
+.who{display:flex;align-items:center;gap:12px}
+.av{width:46px;height:46px;border-radius:50%;background:var(--c);color:var(--on);font-weight:800;font-size:20px;display:grid;place-items:center}
+.nm,h3,.logo,.pts{font-family:var(--hfont);text-transform:var(--tt)}.nm{font-weight:700;font-size:18px}.crown{font-size:12px;color:var(--warn);font-weight:600}
+.pts{font-size:56px;font-weight:800;line-height:1;margin:16px 0 4px;letter-spacing:-1px}
+.pts small{font-size:14px;color:var(--mut);font-weight:500;margin-left:6px;letter-spacing:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{font-size:12px;padding:5px 10px;border-radius:99px;background:var(--sub);border:var(--bw) solid var(--line);color:var(--mut)}
+.chip b{color:var(--tx)}.chip.good{color:#06281c;background:var(--ok);border-color:var(--ok);font-weight:600}.chip.wait{color:#3b2a07;background:var(--warn);border-color:var(--warn);font-weight:600}
+.vs{display:grid;place-items:center;font-weight:800;color:var(--mut);font-size:15px;letter-spacing:2px}
+.vs span{width:54px;height:54px;border-radius:50%;border:var(--bw) solid var(--line);background:var(--panel);display:grid;place-items:center}
+.tug{margin-top:14px;background:var(--panel);border:var(--bw) solid var(--line);border-radius:99px;height:14px;overflow:hidden;display:flex}
+.tug i{display:block;height:100%;transition:width .6s}
+.tugl{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-top:6px}
+.grid2{display:grid;grid-template-columns:1.05fr 1fr;gap:14px;margin-top:18px}
+.card{background:var(--panel);border:var(--bw) solid var(--line);border-radius:var(--r);padding:20px}
+h3{margin:0 0 4px;font-size:16px}.sub{color:var(--mut);font-size:13px;margin:0 0 14px}
+.quest{display:flex;align-items:center;gap:12px;padding:11px 12px;border:var(--bw) solid var(--line);border-radius:12px;margin-bottom:8px;background:var(--sub)}
+.quest em{font-style:normal;width:30px;height:30px;border-radius:9px;background:var(--sub2);display:grid;place-items:center;flex:none}
+.quest div{flex:1;font-size:14px}.quest small{display:block;color:var(--mut);font-size:12px}
+.quest b{font-size:12px;color:var(--p1);white-space:nowrap}
+.form .r{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:12px;color:var(--mut);margin:12px 0 5px;font-weight:500}
+input,select,textarea{width:100%;padding:11px 12px;border-radius:10px;border:var(--bw) solid var(--line);background:var(--inp);color:var(--tx);font:inherit;font-size:15px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--p1)}
+.btn{margin-top:16px;width:100%;padding:13px;border:0;border-radius:12px;background:var(--grad);color:var(--on);font-weight:800;font-size:15px;cursor:pointer}
+.btn:active{transform:scale(.99)}.btn.sec{background:var(--sub2);color:var(--tx);width:auto;margin:0;padding:8px 14px;font-size:13px;font-weight:600}
+.msg{font-size:13px;margin-top:10px;min-height:18px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal .h{font-size:11px;color:var(--mut);text-align:center;padding-bottom:2px}
+.cd{border-radius:10px;background:var(--sub);border:var(--bw) solid var(--line);padding:6px 4px;text-align:center;min-height:54px}
+.cd.today{border-color:var(--tx);box-shadow:0 0 0 1px var(--tx)}
+.cd.light{background:var(--sub3)}.cd.empty{visibility:hidden}
+.cd b{display:block;font-size:12px;font-weight:600}.cd small{display:block;font-size:9px;color:var(--mut);height:11px}
+.dots{display:flex;gap:4px;justify-content:center;margin-top:3px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--dot)}
+.dot.ok{background:var(--c)}.dot.miss{background:transparent;border:2px solid var(--bad)}.dot.pending{border:2px dashed var(--warn);background:transparent}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:12px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px}
+details{margin-top:14px}summary{cursor:pointer;color:var(--mut);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{color:var(--mut);font-weight:500}
+.scroll{overflow-x:auto}
+.rules td:last-child{white-space:normal}
+
+body[data-theme=clean]{--bg:#f4f6fb;--panel:#fff;--panel2:#fff;--line:#e2e8f3;--tx:#0f172a;--mut:#64748b;--p1:#4f46e5;--p2:#ec4899;--ok:#059669;--warn:#f59e0b;--bad:#e11d48;--sub:#f6f8fc;--sub2:#eef2ff;--sub3:#eef2ff;--inp:#fff;--dot:#dbe1ee;--on:#fff;--bgimg:none;--r:16px;--grad:linear-gradient(135deg,#4f46e5,#7c3aed)}
+body[data-theme=clean] .pc,body[data-theme=clean] .card{box-shadow:0 1px 2px #0f172a0d,0 8px 24px -12px #0f172a26}
+body[data-theme=clean] .chip.good{color:#fff}body[data-theme=clean] .chip.wait{color:#fff}
+body[data-theme=terminal]{--bg:#040704;--panel:#09110a;--panel2:#0b160c;--line:#1c381f;--tx:#b9f8bd;--mut:#59a862;--p1:#3dff8a;--p2:#ffd24a;--ok:#3dff8a;--warn:#ffd24a;--bad:#ff5f56;--sub:#060d07;--sub2:#12261a;--sub3:#0b1a10;--inp:#040a05;--dot:#1c381f;--on:#021003;--bgimg:none;--r:3px;--font:'JetBrains Mono',ui-monospace,monospace;--grad:var(--p1)}
+body[data-theme=terminal] .pts{text-shadow:0 0 18px #3dff8a66}body[data-theme=terminal] .logo i{border-radius:3px}
+body[data-theme=terminal] .pill,body[data-theme=terminal] .chip,body[data-theme=terminal] .quest{border-style:dashed}
+body[data-theme=cozy]{--bg:#fff6ea;--panel:#fffdf9;--panel2:#fffdf9;--line:#f1dcc3;--tx:#3a2a1a;--mut:#8c7157;--p1:#f97316;--p2:#8b5cf6;--ok:#16a34a;--warn:#f59e0b;--bad:#e11d48;--sub:#fff3e2;--sub2:#fde5c6;--sub3:#f6ecff;--inp:#fff;--dot:#ecd6bb;--on:#fff;--bgimg:radial-gradient(700px 400px at 90% -10%,#ffd9a8 0,transparent 60%),radial-gradient(600px 400px at 0 0,#e9d5ff 0,transparent 55%);--r:28px;--font:'Nunito',system-ui,sans-serif;--grad:linear-gradient(135deg,#fb923c,#f472b6)}
+body[data-theme=cozy] .chip.good,body[data-theme=cozy] .chip.wait{color:#fff}body[data-theme=cozy] .pc,body[data-theme=cozy] .card{box-shadow:0 10px 30px -16px #b4691f55}
+body[data-theme=sports]{--bg:#0a0a0a;--panel:#141414;--panel2:#1a1a1a;--line:#2b2b2b;--tx:#fff;--mut:#9b9b9b;--p1:#facc15;--p2:#ef4444;--ok:#22c55e;--warn:#facc15;--bad:#ef4444;--sub:#0f0f0f;--sub2:#262626;--sub3:#1d1d1d;--inp:#0c0c0c;--dot:#333;--on:#111;--bgimg:repeating-linear-gradient(115deg,#ffffff06 0 2px,transparent 2px 14px);--r:6px;--hfont:'Oswald',Impact,sans-serif;--tt:uppercase;--grad:linear-gradient(90deg,#facc15,#f59e0b)}
+body[data-theme=sports] .pts{font-size:72px;font-style:italic}body[data-theme=sports] .pc::before{height:8px}body[data-theme=sports] .chip.good,body[data-theme=sports] .chip.wait{color:#111}
+body[data-theme=mono]{--bg:#f7f7f5;--panel:#fff;--panel2:#fff;--line:#111;--tx:#111;--mut:#6b6b6b;--p1:#111;--p2:#e11d48;--ok:#15803d;--warn:#b45309;--bad:#e11d48;--sub:#f2f2ef;--sub2:#e9e9e4;--sub3:#ecece8;--inp:#fff;--dot:#d6d6d0;--on:#fff;--bgimg:none;--r:0px;--bw:1.5px;--font:'Space Grotesk',system-ui,sans-serif;--grad:#111}
+body[data-theme=mono] .av,body[data-theme=mono] .pill,body[data-theme=mono] .logo i,body[data-theme=mono] .vs span{border-radius:0}body[data-theme=mono] .chip.good,body[data-theme=mono] .chip.wait{color:#fff;background:#111;border-color:#111}
+body[data-theme=mono] .cd{border-radius:0}body[data-theme=mono] .tug,body[data-theme=mono] .chip,body[data-theme=mono] .quest,body[data-theme=mono] input,body[data-theme=mono] select,body[data-theme=mono] textarea,body[data-theme=mono] .btn{border-radius:0}
+body[data-theme=mono] .pc.lead{box-shadow:6px 6px 0 var(--c)}
+@media(max-width:760px){.arena{grid-template-columns:1fr}.vs{display:none}.grid2{grid-template-columns:1fr}.pts{font-size:46px}}
 </style></head><body><div class="wrap">
-<h1>Focus Quest</h1><div class="sub" id="sub"></div>
-<div class="grid" id="board"></div>
-<div class="grid" style="margin-top:16px">
- <div class="card"><h3 style="margin-top:0">Log today</h3>
-  <div class="row"><div><label>Player</label><select id="player"></select></div><div><label>Date</label><input type="date" id="day"></div></div>
-  <div class="row"><div><label>Coding solved</label><input type="number" id="coding" min="0" value="0"></div><div><label>Theory + DS/ML minutes</label><input type="number" id="theory_min" min="0" value="0"></div></div>
-  <div class="row"><div><label>Aptitude attempted</label><input type="number" id="apt_attempted" min="0" value="0"></div><div><label>Aptitude correct</label><input type="number" id="apt_correct" min="0" value="0"></div></div>
-  <div class="row"><div><label>English minutes</label><input type="number" id="english_min" min="0" value="0"></div><div><label>Only English today?</label><select id="english_only"><option value="false">No</option><option value="true">Yes</option></select></div></div>
-  <label>What I did (topics, problems)</label><textarea id="notes" rows="2"></textarea>
-  <button id="save">Save log</button><div class="msg" id="msg"></div>
+<div class="top"><div class="logo"><i>⚔</i>Focus Quest</div><div class="pill" id="count"></div></div>
+<div id="banner"></div>
+<div class="arena" id="arena"></div>
+<div class="tug" id="tug"></div><div class="tugl" id="tugl"></div>
+<div class="grid2">
+ <div class="card"><h3>Today's quests</h3><p class="sub" id="qsub"></p><div id="quests"></div></div>
+ <div class="card form"><h3>Log your day</h3><p class="sub">Be honest. Fake numbers only hurt you.</p>
+  <div class="r"><div><label>Player</label><select id="player"></select></div><div><label>Date</label><input type="date" id="day"></div></div>
+  <div id="fullf">
+   <div class="r"><div><label>Coding solved</label><input type="number" id="coding" min="0" value="0" inputmode="numeric"></div><div><label>Theory + DS/ML min</label><input type="number" id="theory_min" min="0" value="0" inputmode="numeric"></div></div>
+   <div class="r"><div><label>Aptitude attempted</label><input type="number" id="apt_attempted" min="0" value="0" inputmode="numeric"></div><div><label>Aptitude correct</label><input type="number" id="apt_correct" min="0" value="0" inputmode="numeric"></div></div>
+  </div>
+  <div class="r"><div><label>English minutes</label><input type="number" id="english_min" min="0" value="0" inputmode="numeric"></div><div><label>Only English today?</label><select id="english_only"><option value="false">No</option><option value="true">Yes</option></select></div></div>
+  <label>Notes</label><textarea id="notes" rows="2" placeholder="Topics, problems, what went wrong"></textarea>
+  <button class="btn" id="save">Save today's log</button><div class="msg" id="msg"></div>
  </div>
- <div class="card"><h3 style="margin-top:0">Rules</h3><table>
-  <tr><td>Coding question</td><td>10 each, max 30</td></tr><tr><td>Aptitude correct</td><td>1 each, max 30</td></tr>
-  <tr><td>20+ attempted at 70%+ accuracy</td><td>+5</td></tr><tr><td>Theory + DS/ML (60 min)</td><td>15</td></tr>
-  <tr><td>English (30 min)</td><td>20</td></tr><tr><td>Only English all day</td><td>+5</td></tr>
-  <tr><td>Full day</td><td>+10</td></tr><tr><td>Streak</td><td>+2/day, max 20</td></tr><tr><td>Missed full day</td><td style="color:var(--bad)">-10</td></tr><tr><td>Light days (3-4 Nov, 15-20 Nov, 23 Nov-4 Dec)</td><td>English 30 min only (max 25), miss = -5</td></tr></table></div>
 </div>
-<div class="card" style="margin-top:16px"><div class="p"><h3 style="margin-top:0">History</h3><button id="exp" style="width:auto;margin:0;padding:6px 12px;background:#30363d">Download CSV backup</button></div><div style="overflow-x:auto"><table id="hist"></table></div></div>
+<div class="card" style="margin-top:14px"><h3>Streak calendar</h3><p class="sub">Every day needs a log from both of you. Light days (moon) need only 30 min of English.</p>
+ <div class="cal" id="cal"></div>
+ <div class="legend"><span><i class="dot ok" style="--c:var(--p1)"></i>Logged</span><span><i class="dot miss"></i>Missed</span><span><i class="dot pending"></i>Today, not yet</span><span>🌙 Light day</span></div>
+</div>
+<div class="card" style="margin-top:14px">
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0">History and rules</h3><button class="btn sec" id="exp">Download CSV</button></div>
+ <details><summary>How points work</summary><table class="rules">
+ <tr><td>Coding question</td><td>10 each, max 30</td></tr><tr><td>Aptitude correct</td><td>1 each, max 30; +5 if 20+ attempted at 70%+</td></tr>
+ <tr><td>Theory + DS/ML (60 min)</td><td>15</td></tr><tr><td>English (30 min)</td><td>20</td></tr><tr><td>Only English all day</td><td>+5</td></tr>
+ <tr><td>Full day (2+ coding, 20+ aptitude, 30 min English)</td><td>+10</td></tr><tr><td>Streak</td><td>+2 per day, max 20</td></tr>
+ <tr><td>Light day</td><td>English only, max 25</td></tr><tr><td>Missed day</td><td>-10 full, -5 light</td></tr></table></details>
+ <details open><summary>All logs</summary><div class="scroll"><table id="hist"></table></div></details>
+</div>
 </div>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-const C=window.DUEL,db=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY),$=id=>document.getElementById(id);
-const COL=[getComputedStyle(document.documentElement).getPropertyValue('--a'),getComputedStyle(document.documentElement).getPropertyValue('--b')];
-const iso=d=>d.toISOString().slice(0,10),today=iso(new Date());
-$('player').innerHTML=C.PLAYERS.map(p=>`<option>${p}</option>`).join('');$('day').value=today;
-try{const s=localStorage.getItem('duel-me');if(s)$('player').value=s}catch(e){}
+const C=window.DUEL,$=id=>document.getElementById(id);
+const DEMO=location.search.includes('demo');
+const TH=new URLSearchParams(location.search).get('theme')||C.THEME||'midnight';document.body.dataset.theme=TH;
+const pad=n=>String(n).padStart(2,'0'),iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const TODAY=DEMO?'2026-11-14':iso(new Date());
+const COL=['var(--p1)','var(--p2)'];
 const mode=d=>C.LIGHT.some(r=>d>=r[0]&&d<=r[1])?'light':'full';
-function dayPts(l){if(mode(l.day)!=='full')return Math.round(Math.min(l.english_min,30)/30*20)+(l.english_only?5:0);let p=Math.min(l.coding,3)*10+Math.min(l.apt_correct,30);
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const ALLDAYS=[];for(let d=C.START;d<=C.END;d=addDays(d,1))ALLDAYS.push(d);
+// data layer
+let db=null,DL=[];
+if(DEMO){let s=7;const r=()=>{s=(s*9301+49297)%233280;return s/233280};
+ C.PLAYERS.forEach((p,i)=>ALLDAYS.filter(d=>d<TODAY).forEach(d=>{if(r()<.9-i*.08){const f=mode(d)==='full';DL.push({player:p,day:d,coding:f?Math.round(1+r()*2):0,apt_attempted:f?Math.round(15+r()*20):0,apt_correct:f?Math.round(10+r()*18):0,theory_min:f?Math.round(40+r()*30):0,english_min:Math.round(20+r()*15),english_only:r()<.4,notes:f?'Strings, SQL joins':'English talk'})}}))}
+else db=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
+async function fetchLogs(){if(DEMO)return DL;const{data,error}=await db.from('logs').select('*').order('day',{ascending:false});if(error)throw error;return data}
+async function saveLog(row){if(DEMO){DL=DL.filter(l=>!(l.player===row.player&&l.day===row.day));DL.push(row);return{}}return db.from('logs').upsert(row,{onConflict:'player,day'})}
+function dayPts(l){if(mode(l.day)!=='full')return Math.round(Math.min(l.english_min,30)/30*20)+(l.english_only?5:0);
+ let p=Math.min(l.coding,3)*10+Math.min(l.apt_correct,30);
  if(l.apt_attempted>=20&&l.apt_correct/l.apt_attempted>=.7)p+=5;
  p+=Math.round(Math.min(l.theory_min,60)/60*15)+Math.round(Math.min(l.english_min,30)/30*20);
  if(l.english_only)p+=5;if(l.coding>=2&&l.apt_attempted>=20&&l.english_min>=30)p+=10;return p}
-function days(){const out=[],e=new Date(Math.min(new Date(today),new Date(C.END)));for(let d=new Date(C.START);d<=e;d.setDate(d.getDate()+1))out.push(iso(d));return out}
-function score(logs,player){const m={};logs.filter(l=>l.player===player).forEach(l=>m[l.day]=l);
- let tot=0,streak=0,best=0,series=[],c=0,a=0;
- for(const d of days()){const l=m[d];
-  if(l){streak++;const p=dayPts(l)+Math.min(streak*2,20);tot+=p;series.push(p);c+=l.coding;a+=l.english_min}
-  else if(d<today){streak=0;tot-=(mode(d)==='light'?5:10);series.push(0)} else series.push(0);best=Math.max(best,streak)}
- return{tot,streak,best,series,c,a}}
-async function load(){
- const{data,error}=await db.from('logs').select('*').order('day',{ascending:false});
- if(error){$('board').innerHTML=`<div class="card">Database not connected: ${error.message}. Check config.js.</div>`;return}
- const left=Math.max(0,Math.ceil((new Date(C.END)-new Date(today))/864e5));
- $('sub').textContent=`${C.START} to ${C.END} · ${left} days to the drive · 3.5 hrs daily (3 prep + 30 English), light on exam days`;
- const S=C.PLAYERS.map(p=>({p,...score(data,p)})),top=Math.max(...S.map(s=>s.tot),1);
- $('board').innerHTML=S.map((s,i)=>`<div class="card"><div class="p"><h2 style="margin:0">${s.p}</h2>${s.tot===top&&S[0].tot!==S[1].tot?'<span class="lead">LEADING</span>':''}</div>
-  <div class="big">${s.tot}</div><div class="bar"><i style="width:${Math.max(0,s.tot/top*100)}%;background:${COL[i]}"></i></div>
-  <div class="stats"><span>🔥 Streak ${s.streak}</span><span>Best ${s.best}</span><span>Coding ${s.c}</span><span>English ${s.a} min</span></div>
-  <div class="spark">${s.series.slice(-21).map(v=>`<i title="${v}" style="height:${v/155*100}%;background:${COL[i]}"></i>`).join('')}</div></div>`).join('');
- $('hist').innerHTML='<tr><th>Date</th><th>Player</th><th>Code</th><th>Apt</th><th>Theory</th><th>Eng</th><th>Pts</th><th>Notes</th></tr>'+
-  data.map(l=>`<tr><td>${l.day}</td><td>${l.player}</td><td>${l.coding}</td><td>${l.apt_correct}/${l.apt_attempted}</td><td>${l.theory_min}</td><td>${l.english_min}${l.english_only?' ✓':''}</td><td>${dayPts(l)}</td><td>${(l.notes||'').replace(/</g,'&lt;')}</td></tr>`).join('')}
-$('save').onclick=async()=>{const n=k=>Math.max(0,parseInt($(k).value)||0);
- const row={player:$('player').value,day:$('day').value,coding:n('coding'),apt_attempted:n('apt_attempted'),apt_correct:Math.min(n('apt_correct'),n('apt_attempted')),
-  theory_min:n('theory_min'),english_min:n('english_min'),english_only:$('english_only').value==='true',notes:$('notes').value};
- try{localStorage.setItem('duel-me',row.player)}catch(e){}
- const{error}=await db.from('logs').upsert(row,{onConflict:'player,day'});
- $('msg').style.color=error?'var(--bad)':'var(--ok)';$('msg').textContent=error?error.message:`Saved. ${dayPts(row)} points (+ streak bonus).`;load()};
-let ALL=[];const _l=load;
-$('exp').onclick=async()=>{const{data}=await db.from('logs').select('*').order('day');if(!data||!data.length)return;const k=Object.keys(data[0]);
+function calc(logs,player){const m={};logs.filter(l=>l.player===player).forEach(l=>m[l.day]=l);
+ let tot=0,streak=0,best=0,coding=0,eng=0;const status={};
+ for(const d of ALLDAYS){const l=m[d];
+  if(l){streak++;tot+=dayPts(l)+Math.min(streak*2,20);coding+=l.coding;eng+=l.english_min;status[d]='ok'}
+  else if(d<TODAY){streak=0;tot-=(mode(d)==='light'?5:10);status[d]='miss'}
+  else status[d]=d===TODAY?'pending':'future';
+  best=Math.max(best,streak)}
+ return{tot,streak,best,coding,eng,status,today:m[TODAY]}}
+const daysLeft=()=>Math.max(0,Math.round((new Date(C.END+'T00:00:00')-new Date(TODAY+'T00:00:00'))/864e5));
+function quests(){const d=TODAY;
+ if(d<C.START)return{sub:`Starts ${C.START}. Get ready.`,list:[]};
+ if(d>C.END)return{sub:'The quest is over. Final scores are on the board.',list:[]};
+ if(mode(d)==='light')return{sub:'Light day. One quest only, but it still counts for the streak.',list:[['🗣','English speaking','Talk out loud, record 2 min','30 min']]};
+ return{sub:'Full day: 3.5 hours.',list:[['⚡','Aptitude set','Timed, log wrong answers','40 min'],['☕','Java coding','2 questions, strings or arrays','50 min'],['📘','Theory','OOP, OS or DBMS topic of the day','20 min'],['🎤','Project talk','Explain a project in English','10 min'],['📊','DS + ML','SQL, Python, ML concepts','60 min'],['🗣','English speaking','Only English with each other','30 min']]}}
+function render(logs){
+ const S=C.PLAYERS.map(p=>({p,...calc(logs,p)})),max=Math.max(...S.map(s=>s.tot),1),lead=S[0].tot===S[1].tot?-1:(S[0].tot>S[1].tot?0:1);
+ const dn=Math.max(1,ALLDAYS.indexOf(TODAY)+1);
+ $('count').innerHTML=TODAY<C.START?`Starts <b>${C.START}</b>`:`Day <b>${Math.min(dn,ALLDAYS.length)}</b> of ${ALLDAYS.length} · <b>${daysLeft()}</b> days left`;
+ $('arena').innerHTML=S.map((s,i)=>{const lg=s.today;const chip=TODAY<C.START||TODAY>C.END?'':(lg?`<span class="chip good">Logged today ✓</span>`:`<span class="chip wait">Not logged yet</span>`);
+  const arr=[`<div class="pc ${lead===i?'lead':''}" style="--c:${COL[i]}"><div class="who"><div class="av">${s.p[0].toUpperCase()}</div><div><div class="nm">${s.p}</div>${lead===i?'<div class="crown">👑 Leading</div>':'<div class="crown" style="visibility:hidden">.</div>'}</div></div><div class="pts">${s.tot}<small>points</small></div><div class="chips"><span class="chip">🔥 Streak <b>${s.streak}</b></span><span class="chip">Best <b>${s.best}</b></span><span class="chip">Coding <b>${s.coding}</b></span><span class="chip">English <b>${s.eng}</b> min</span>${chip}</div></div>`];
+  return i===0?arr[0]+'<div class="vs"><span>VS</span></div>':arr[0]}).join('');
+ const t=Math.max(1,S[0].tot+S[1].tot),a=Math.max(0,S[0].tot)/Math.max(1,Math.max(0,S[0].tot)+Math.max(0,S[1].tot))*100;
+ $('tug').innerHTML=`<i style="width:${S[0].tot+S[1].tot<=0?50:a}%;background:var(--p1)"></i><i style="width:${S[0].tot+S[1].tot<=0?50:100-a}%;background:var(--p2)"></i>`;
+ $('tugl').innerHTML=`<span>${S[0].p}</span><span>${lead<0?'Tied':Math.abs(S[0].tot-S[1].tot)+' point lead'}</span><span>${S[1].p}</span>`;
+ const q=quests();$('qsub').textContent=q.sub;$('quests').innerHTML=q.list.map(x=>`<div class="quest"><em>${x[0]}</em><div>${x[1]}<small>${x[2]}</small></div><b>${x[3]}</b></div>`).join('');
+ const first=new Date(C.START+'T00:00:00').getDay();const lead0=(first+6)%7;
+ let h='Mon Tue Wed Thu Fri Sat Sun'.split(' ').map(x=>`<div class="h">${x}</div>`).join('')+'<div class="cd empty"></div>'.repeat(lead0);
+ h+=ALLDAYS.map(d=>{const dots=S.map((s,i)=>`<i class="dot ${s.status[d]==='ok'?'ok':s.status[d]==='miss'?'miss':s.status[d]==='pending'?'pending':''}" style="--c:${COL[i]}"></i>`).join('');
+  return `<div class="cd ${mode(d)==='light'?'light':''} ${d===TODAY?'today':''}"><b>${+d.slice(8)}</b><small>${mode(d)==='light'?'🌙':''}</small><div class="dots">${dots}</div></div>`}).join('');
+ $('cal').innerHTML=h;
+ $('hist').innerHTML='<tr><th>Date</th><th>Player</th><th>Code</th><th>Apt</th><th>Theory</th><th>Eng</th><th>Pts</th><th>Notes</th></tr>'+logs.slice().sort((a,b)=>b.day.localeCompare(a.day)).map(l=>`<tr><td>${l.day}</td><td>${l.player}</td><td>${l.coding}</td><td>${l.apt_correct}/${l.apt_attempted}</td><td>${l.theory_min}</td><td>${l.english_min}${l.english_only?' ✓':''}</td><td>${dayPts(l)}</td><td>${(l.notes||'').replace(/</g,'&lt;')}</td></tr>`).join('');
+ syncForm()}
+function syncForm(){$('fullf').style.display=mode($('day').value)==='full'?'block':'none'}
+async function load(){try{render(await fetchLogs())}catch(e){$('banner').innerHTML=`<div class="banner">Database not connected: ${String(e.message||e).replace(/</g,'&lt;')}. Check config.js and that schema.sql was run.</div>`;render([])}}
+$('player').innerHTML=C.PLAYERS.map(p=>`<option>${p}</option>`).join('');$('day').value=TODAY;
+try{const s=localStorage.getItem('fq-me');if(s&&C.PLAYERS.includes(s))$('player').value=s}catch(e){}
+$('day').onchange=syncForm;
+if(DEMO)$('banner').innerHTML='<div class="banner">Demo mode: sample data, nothing is saved. Open the site without ?demo for the real tracker.</div>';
+$('save').onclick=async()=>{const n=k=>Math.max(0,parseInt($(k).value)||0),full=mode($('day').value)==='full';
+ const row={player:$('player').value,day:$('day').value,coding:full?n('coding'):0,apt_attempted:full?n('apt_attempted'):0,apt_correct:full?Math.min(n('apt_correct'),n('apt_attempted')):0,
+  theory_min:full?n('theory_min'):0,english_min:n('english_min'),english_only:$('english_only').value==='true',notes:$('notes').value};
+ try{localStorage.setItem('fq-me',row.player)}catch(e){}
+ const r=await saveLog(row);const m=$('msg');
+ if(r&&r.error){m.style.color='var(--bad)';m.textContent=r.error.message}else{m.style.color='var(--ok)';m.textContent=`Saved. ${dayPts(row)} points for the day, plus streak bonus.`;$('notes').value=''}
+ load()};
+$('exp').onclick=async()=>{const data=await fetchLogs();if(!data.length)return;const k=Object.keys(data[0]);
  const csv=[k.join(',')].concat(data.map(r=>k.map(c=>JSON.stringify(r[c]??'')).join(','))).join('\n');
- const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='prep-duel-backup.csv';a.click()};
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='focus-quest-backup.csv';a.click()};
 load();
 </script></body></html>
