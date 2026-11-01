@@ -10,9 +10,10 @@
   <nav class="nav" id="nav"></nav>
   <main class="main">
     <header class="head">
-      <div class="hello" id="hello"><div><h1 id="hi">Dashboard</h1><p class="sub" id="hsub"></p></div></div>
+      <div><div class="eyebrow">Dashboard</div></div>
       <div id="count"></div>
     </header>
+    <section class="hero" id="hero"></section>
     <div id="banner"></div>
     <section class="kpis" id="kpis"></section>
     <section class="card">
@@ -63,8 +64,8 @@ function setPrep(v){prep=v;document.querySelectorAll('#seg button').forEach(b=>b
 function render(logs){
  const S=P.map(p=>({...p,...calc(logs,p.email)})),meS=S.find(s=>s.email===me.email),other=S.find(s=>s.email!==me.email),
   rank=[...S].sort((a,b)=>b.tot-a.tot).findIndex(s=>s.email===me.email)+1,full=mode(TODAY)==='full',inRange=TODAY>=C.START&&TODAY<=C.END;
- $('hello').innerHTML=`${FQ.av(me,60)}<div><h1>Hi, ${esc(me.name)}</h1><p class="sub" id="hsub"></p></div>`;
- document.getElementById('hsub').textContent=new Date(TODAY+'T00:00:00Z').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+ const dateStr=new Date(TODAY+'T00:00:00Z').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+ $('hero').innerHTML=`<div class="hero-t"><div class="eyebrow">${dateStr}</div><h1>Hi, ${esc(me.name)}</h1><p class="sub">${TODAY<C.START?'Your quest starts soon.':(full?'Full day today. Make it count.':'English-only day. Keep the streak alive.')}</p><div class="hero-b">${meS.today?'<span class="badge ok">Logged today</span>':'<span class="badge warn">Not logged yet</span>'}<span class="badge">${meS.streak}-day streak</span></div></div><div class="hero-f">${[me,other].map(p=>{const s=S.find(x=>x.email===p.email);return `<figure>${p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'ph',textContent:'${esc(p.name[0])}'}))">`:`<div class="ph">${esc(p.name[0])}</div>`}<figcaption><b>${esc(p.name)}</b><span>${s.tot} pts</span></figcaption></figure>`}).join('')}</div>`;
  $('count').innerHTML=TODAY<C.START?`<span class="badge">Starts <b>${C.START}</b></span>`:`<span class="badge">Day <b>${FQ.dayNo()}</b> of ${FQ.ALLDAYS.length} · <b>${FQ.daysLeft()}</b> days left</span>`;
  const st=meS.today?'<span class="badge ok">Logged</span>':'<span class="badge warn">Not logged</span>';
  const diff=meS.tot-other.tot;
