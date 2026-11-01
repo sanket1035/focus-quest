@@ -6,11 +6,11 @@ create table logs (
   player text not null default lower(auth.jwt() ->> 'email'),          -- set by the server from the login
   day date not null default ((now() at time zone 'Asia/Kolkata')::date), -- set by the server, cannot be backdated
   did_prep boolean not null default false,
-  coding int not null default 0 check (coding between 0 and 30),
-  apt_attempted int not null default 0 check (apt_attempted between 0 and 300),
-  apt_correct int not null default 0 check (apt_correct between 0 and 300),
-  theory_min int not null default 0 check (theory_min between 0 and 600),
-  english_min int not null default 0 check (english_min between 0 and 600),
+  coding int not null default 0 check (coding between 0 and 5),
+  apt_attempted int not null default 0 check (apt_attempted between 0 and 60),
+  apt_correct int not null default 0 check (apt_correct between 0 and 60),
+  theory_min int not null default 0 check (theory_min between 0 and 120),
+  english_min int not null default 0 check (english_min between 0 and 60),
   notes text not null default '',
   created_at timestamptz not null default now(),
   unique (player, day),

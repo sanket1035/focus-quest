@@ -1,0 +1,3 @@
+-- Run this ONLY if you already ran schema_v2.sql earlier. It tightens the limits without deleting data.
+alter table logs drop constraint if exists logs_coding_check, drop constraint if exists logs_apt_attempted_check, drop constraint if exists logs_apt_correct_check, drop constraint if exists logs_theory_min_check, drop constraint if exists logs_english_min_check;
+alter table logs add constraint logs_coding_check check (coding between 0 and 5), add constraint logs_apt_attempted_check check (apt_attempted between 0 and 60), add constraint logs_apt_correct_check check (apt_correct between 0 and 60), add constraint logs_theory_min_check check (theory_min between 0 and 120), add constraint logs_english_min_check check (english_min between 0 and 60);
