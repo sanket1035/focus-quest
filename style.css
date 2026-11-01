@@ -108,3 +108,14 @@ body.auth{display:grid;place-items:center;min-height:100vh;padding:20px}
  .cd{min-height:52px;padding:4px 1px}.cd b{font-size:16px}.dot{width:8px;height:8px}
 }
 @media(min-width:901px){.srow .meta{display:contents}.srow .meta span.lab{display:none}}
+
+/* hero with cut-out portraits */
+.hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:28px 32px 0;margin-bottom:18px;overflow:hidden;min-height:230px}
+.hero-t{padding-bottom:28px;align-self:center}.hero-t h1{margin:10px 0 6px;font-size:46px}.hero-b{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.hero-f{display:flex;gap:6px;align-items:flex-end}
+.hero-f figure{margin:0;position:relative;width:210px;text-align:center}
+.hero-f img{display:block;width:210px;height:200px;object-fit:contain;object-position:bottom}
+.hero-f .ph{width:210px;height:150px;display:grid;place-items:center;font-family:var(--serif);font-size:72px;color:var(--mut)}
+.hero-f figcaption{display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-bottom:0;border-radius:8px 8px 0 0;padding:9px 12px;font-size:13px;margin-top:-1px;position:relative}
+.hero-f figcaption b{font-weight:600}.hero-f figcaption span{color:var(--mut);font-variant-numeric:tabular-nums}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding:22px 18px 0}.hero-t{padding-bottom:6px}.hero-t h1{font-size:34px}.hero-f{justify-content:center}.hero-f figure,.hero-f img{width:min(160px,44vw)}.hero-f img{height:min(160px,44vw)}.hero-f .ph{width:100%}}

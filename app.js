@@ -10,9 +10,9 @@
   const ALLDAYS = []; for (let d = C.START; d <= C.END; d = addDays(d, 1)) ALLDAYS.push(d);
   const mode = d => C.LIGHT.some(r => d >= r[0] && d <= r[1]) ? 'light' : 'full';
   const SIL = c => 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="${c}"/><circle cx="50" cy="38" r="17" fill="#ece4d2"/><path d="M14 100c2-26 18-38 36-38s34 12 36 38z" fill="#ece4d2"/></svg>`);
-  const P = C.PLAYERS.map((p, i) => ({ name: p.name, email: p.email.toLowerCase(), photo: DEMO ? SIL(i ? '#8b8566' : '#3a3026') : (p.photo || '') }));
+  const P = C.PLAYERS.map((p, i) => ({ name: p.name, email: p.email.toLowerCase(), photo: p.photo || (DEMO ? SIL(i ? '#8b8566' : '#3a3026') : '') }));
   // Avatar: photo if it loads, otherwise the first letter.
-  const av = (p, s) => `<div class="av" style="--s:${s || 32}px">${p.photo ? `<img src="${esc(p.photo)}" alt="" onerror="this.remove()">` : ''}<span>${esc(p.name[0])}</span></div>`;
+  const av = (p, s, noPhoto) => `<div class="av" style="--s:${s || 32}px">${p.photo && !noPhoto ? `<img src="${esc(p.photo)}" alt="" onerror="this.remove()">` : ''}<span>${esc(p.name[0])}</span></div>`;
 
   // ---------- scoring ----------
   const engPts = l => Math.round(Math.min(l.english_min, 30) / 30 * 20);

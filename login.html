@@ -22,7 +22,7 @@
 <script>
 const $=id=>document.getElementById(id);
 $('mk').innerHTML=FQ.icon('logo',16);
-$('who').innerHTML=FQ.P.map(p=>`<button type="button" class="whob" data-e="${FQ.esc(p.email)}">${FQ.av(p,44)}<span>${FQ.esc(p.name)}</span></button>`).join('');
+$('who').innerHTML=FQ.P.map(p=>`<button type="button" class="whob" data-e="${FQ.esc(p.email)}">${FQ.av(p,44,true)}<span>${FQ.esc(p.name)}</span></button>`).join('');
 document.querySelectorAll('.whob').forEach(b=>b.onclick=()=>{$('email').value=b.dataset.e;document.querySelectorAll('.whob').forEach(x=>x.classList.toggle('on',x===b));$('pw').focus()});
 async function go(){
   const m=$('msg');m.className='msg';m.textContent='Checking...';
