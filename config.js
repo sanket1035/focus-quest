@@ -7,7 +7,6 @@ window.DUEL = {
     { name: "Sanket", email: "sanket@example.com" },
     { name: "Purva",  email: "purva@example.com" }
   ],
-  UI: "skill",   // "skill" (lilac sidebar) or "arena" (purple game style)
   START: "2026-11-02",
   END: "2026-12-06",
   // English-only (30 min) days: colloquium, practicals, semester exams

@@ -3,40 +3,46 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Focus Quest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="shell">
   <nav class="nav" id="nav"></nav>
   <main class="main">
     <header class="head">
-      <div><h1 id="hi">Hi</h1><p class="sub" id="hsub"></p></div>
-      <div class="hr"><span class="pill" id="count"></span></div>
+      <div><h1 id="hi">Dashboard</h1><p class="sub" id="hsub"></p></div>
+      <div id="count"></div>
     </header>
     <div id="banner"></div>
-    <section class="tiles" id="tiles"></section>
-    <section class="vsrow" id="vs"></section>
-    <div class="tug" id="tug"></div><div class="tugl" id="tugl"></div>
+    <section class="kpis" id="kpis"></section>
+    <section class="card">
+      <div class="card-h"><h2>Scoreboard</h2><span class="sub" id="ssub"></span></div>
+      <div id="board"></div>
+    </section>
     <section class="two">
-      <div class="card dark" id="qcard"><h3>Today's quests</h3><p class="sub" id="qsub"></p><div id="quests"></div></div>
-      <div class="card" id="lcard">
-        <h3>Log today</h3>
-        <p class="sub" id="lsub"></p>
-        <div id="fullbox">
-          <label>Did you do your Zensar prep today?</label>
-          <div class="seg" id="seg"><button type="button" data-v="yes">Yes, I did</button><button type="button" data-v="no">No, not today</button></div>
-          <div id="prepbox" hidden>
-            <div class="r2"><div><label>Coding questions solved</label><input id="coding" type="number" min="0" max="30" value="0" inputmode="numeric"></div>
-            <div><label>Theory + DS/ML minutes</label><input id="theory_min" type="number" min="0" max="600" value="0" inputmode="numeric"></div></div>
-            <div class="r2"><div><label>Aptitude attempted</label><input id="apt_attempted" type="number" min="0" max="300" value="0" inputmode="numeric"></div>
-            <div><label>Aptitude correct</label><input id="apt_correct" type="number" min="0" max="300" value="0" inputmode="numeric"></div></div>
+      <div class="card">
+        <div class="card-h"><div><h2>Today</h2><p class="sub" id="qsub"></p></div><span id="daytype"></span></div>
+        <div id="quests"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h2>Log today</h2><p class="sub" id="lsub"></p></div></div>
+        <div class="card-b">
+          <div id="fullbox">
+            <label>Did you do your Zensar prep today?</label>
+            <div class="seg" id="seg"><button type="button" data-v="yes">Yes</button><button type="button" data-v="no">No</button></div>
+            <div id="prepbox" hidden>
+              <div class="r2"><div><label>Coding questions solved</label><input id="coding" type="number" min="0" max="30" value="0" inputmode="numeric"></div>
+              <div><label>Theory + DS/ML (min)</label><input id="theory_min" type="number" min="0" max="600" value="0" inputmode="numeric"></div></div>
+              <div class="r2"><div><label>Aptitude attempted</label><input id="apt_attempted" type="number" min="0" max="300" value="0" inputmode="numeric"></div>
+              <div><label>Aptitude correct</label><input id="apt_correct" type="number" min="0" max="300" value="0" inputmode="numeric"></div></div>
+            </div>
           </div>
+          <label>English speaking (min)</label><input id="english_min" type="number" min="0" max="600" value="0" inputmode="numeric">
+          <label>Notes</label><textarea id="notes" rows="2" placeholder="Optional"></textarea>
+          <button class="btn" id="save">Save</button>
+          <div class="msg" id="msg"></div>
+          <p class="hint">The date is set automatically. You can edit only your own entry for today. Entries cannot be deleted.</p>
         </div>
-        <label>English speaking minutes</label><input id="english_min" type="number" min="0" max="600" value="0" inputmode="numeric">
-        <label>Notes (optional)</label><textarea id="notes" rows="2" placeholder="Topics, problems, what went wrong"></textarea>
-        <button class="btn" id="save">Save</button>
-        <div class="msg" id="msg"></div>
-        <p class="hint">The date is set automatically. You can edit only your own entry for today, and nobody can delete entries.</p>
       </div>
     </section>
   </main>
@@ -45,38 +51,48 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="app.js"></script>
 <script>
-const $=id=>document.getElementById(id),{C,TODAY,P,mode,dayPts,calc,esc}=FQ;
+const $=id=>document.getElementById(id),{C,TODAY,P,mode,dayPts,calc,esc,icon}=FQ;
 let me=null,prep=null;
 const COL=['var(--p1)','var(--p2)'];
 function quests(){
- if(TODAY<C.START)return{sub:`Starts ${C.START}. Get ready.`,list:[]};
- if(TODAY>C.END)return{sub:'The quest is over. Final scores are on the board.',list:[]};
- if(mode(TODAY)==='light')return{sub:'Light day. English speaking only, but it still counts for the streak.',list:[['🗣','English speaking','Talk out loud, record 2 min','30 min']]};
- return{sub:'Full day: 3.5 hours.',list:[['⚡','Aptitude set','Timed, log wrong answers','40 min'],['☕','Java coding','2 questions, strings or arrays','50 min'],['📘','Theory','OOP, OS or DBMS topic','20 min'],['🎤','Project talk','Explain a project in English','10 min'],['📊','DS + ML','SQL, Python, ML concepts','60 min'],['🗣','English speaking','Only English with each other','30 min']]}}
+ if(TODAY<C.START)return{sub:`Starts ${C.START}`,list:[],total:''};
+ if(TODAY>C.END)return{sub:'The quest is over',list:[],total:''};
+ if(mode(TODAY)==='light')return{sub:'English speaking only. It still counts for the streak.',list:[['English speaking','Talk out loud, record 2 minutes','30 min']],total:'30 min planned'};
+ return{sub:'3 h 30 min planned',list:[['Aptitude set','Timed, log the wrong answers','40 min'],['Java coding','2 questions, strings or arrays','50 min'],['Theory','OOP, OS or DBMS topic','20 min'],['Project talk','Explain a project in English','10 min'],['Data science and ML','SQL, Python, ML concepts','60 min'],['English speaking','English only with each other','30 min']],total:'3 h 30 min planned'}}
 function setPrep(v){prep=v;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('prepbox').hidden=v!=='yes'}
 function render(logs){
- const S=P.map(p=>({...p,...calc(logs,p.email)})),meS=S.find(s=>s.email===me.email),rank=[...S].sort((a,b)=>b.tot-a.tot).findIndex(s=>s.email===me.email)+1;
- const lead=S[0].tot===S[1].tot?-1:(S[0].tot>S[1].tot?0:1);
- $('hi').textContent=`Hi ${me.name}`;$('hsub').textContent=TODAY<C.START?'Your quest starts soon.':(mode(TODAY)==='light'?'Light day today. Keep the streak alive.':'Full day today. Make it count.');
- $('count').innerHTML=TODAY<C.START?`Starts <b>${C.START}</b>`:`Day <b>${FQ.dayNo()}</b> of ${FQ.ALLDAYS.length} · <b>${FQ.daysLeft()}</b> left`;
- $('tiles').innerHTML=`<div class="tile"><em>🏆</em><b>#${rank}</b><span>Rank</span></div><div class="tile"><em>⚡</em><b>${meS.tot}</b><span>Points</span></div><div class="tile"><em>🔥</em><b>${meS.streak}</b><span>Day streak</span></div>`;
- $('vs').innerHTML=S.map((s,i)=>{const chip=TODAY<C.START||TODAY>C.END?'':(s.today?'<span class="chip good">Logged today ✓</span>':'<span class="chip wait">Not logged yet</span>');
-  return `<div class="pc ${lead===i?'lead':''}" style="--c:${COL[i]}"><div class="who"><div class="av">${esc(s.name[0])}</div><div><div class="nm">${esc(s.name)}${s.email===me.email?' <small>you</small>':''}</div><div class="crown">${lead===i?'👑 Leading':'&nbsp;'}</div></div></div>
-  <div class="pts">${s.tot}<small>points</small></div><div class="chips"><span class="chip">🔥 <b>${s.streak}</b></span><span class="chip">Best <b>${s.best}</b></span><span class="chip">Coding <b>${s.coding}</b></span><span class="chip">English <b>${s.eng}</b>m</span>${chip}</div></div>`}).join('');
- const pos=S.map(s=>Math.max(0,s.tot)),sum=pos[0]+pos[1],a=sum?pos[0]/sum*100:50;
- $('tug').innerHTML=`<i style="width:${a}%;background:var(--p1)"></i><i style="width:${100-a}%;background:var(--p2)"></i>`;
- $('tugl').innerHTML=`<span>${esc(S[0].name)}</span><span>${lead<0?'Tied':Math.abs(S[0].tot-S[1].tot)+' point lead'}</span><span>${esc(S[1].name)}</span>`;
- const q=quests();$('qsub').textContent=q.sub;$('quests').innerHTML=q.list.map(x=>`<div class="quest"><em>${x[0]}</em><div>${x[1]}<small>${x[2]}</small></div><b>${x[3]}</b></div>`).join('');
- const full=mode(TODAY)==='full',inRange=TODAY>=C.START&&TODAY<=C.END;
- $('fullbox').hidden=!full;$('lsub').textContent=inRange?`${TODAY} · ${full?'full day':'light day: English only'}`:'Logging opens on '+C.START;
- $('save').disabled=!inRange;
- const t=meS.today;$('save').textContent=t?'Update today\'s log':'Save today\'s log';
+ const S=P.map(p=>({...p,...calc(logs,p.email)})),meS=S.find(s=>s.email===me.email),other=S.find(s=>s.email!==me.email),
+  rank=[...S].sort((a,b)=>b.tot-a.tot).findIndex(s=>s.email===me.email)+1,full=mode(TODAY)==='full',inRange=TODAY>=C.START&&TODAY<=C.END;
+ $('hi').textContent=`Hi ${me.name}`;
+ $('hsub').textContent=new Date(TODAY+'T00:00:00Z').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+ $('count').innerHTML=TODAY<C.START?`<span class="badge">Starts <b>${C.START}</b></span>`:`<span class="badge">Day <b>${FQ.dayNo()}</b> of ${FQ.ALLDAYS.length} · <b>${FQ.daysLeft()}</b> days left</span>`;
+ const st=meS.today?'<span class="badge ok">Logged</span>':'<span class="badge warn">Not logged</span>';
+ const diff=meS.tot-other.tot;
+ $('kpis').innerHTML=[
+  ['bolt','Your points',meS.tot,diff===0?'Level with '+esc(other.name):(diff>0?`${diff} ahead of ${esc(other.name)}`:`${-diff} behind ${esc(other.name)}`)],
+  ['trophy','Rank','#'+rank,'of 2 players'],
+  ['flame','Current streak',meS.streak+' d','Best '+meS.best+' days'],
+  ['check','Today',inRange?(meS.today?'Logged':'Pending'):'-',inRange?(full?'Full day':'Light day'):'Not started']
+ ].map(k=>`<div class="card kpi"><div class="l">${icon(k[0],15)}${k[1]}</div><div class="v">${k[2]}</div><div class="s">${k[3]}</div></div>`).join('');
+ const total=Math.max(1,S.reduce((a,s)=>a+Math.max(0,s.tot),0));
+ $('ssub').textContent='Share of total points';
+ $('board').innerHTML='<div class="srow shead"><span>Player</span><span>Points</span><span>Share</span><span>Streak</span><span>Best</span><span>Coding</span><span>English</span><span>Today</span></div>'+
+  [...S].sort((a,b)=>b.tot-a.tot).map(s=>{const i=P.findIndex(p=>p.email===s.email),lead=S[0].tot!==S[1].tot&&s.tot===Math.max(S[0].tot,S[1].tot);
+   const t=!inRange?'':(s.today?'<span class="badge ok">Logged today</span>':'<span class="badge warn">Not logged yet</span>');
+   return `<div class="srow" style="--c:${COL[i]}"><div class="pl"><div class="av">${esc(s.name[0])}</div><span>${esc(s.name)}${s.email===me.email?'<small>you</small>':''}${lead?'<span class="lead-tag">Leading</span>':''}</span></div>
+   <div class="num pts">${s.tot}</div><div class="bar"><i style="width:${Math.max(0,s.tot)/total*100}%"></i></div>
+   <div class="meta"><span class="num">${s.streak} d<span class="lab"> streak</span></span><span class="num m4">${s.best} d</span><span class="num m4">${s.coding}</span><span class="num m4">${s.eng} m</span></div><div class="td">${t}</div></div>`}).join('');
+ const q=quests();$('qsub').textContent=q.sub;
+ $('daytype').innerHTML=inRange?`<span class="badge">${full?'Full day':'Light day'}</span>`:'';
+ $('quests').innerHTML=q.list.length?q.list.map(x=>`<div class="todo"><span class="ck"></span><div>${x[0]}<small>${x[1]}</small></div><span class="t">${x[2]}</span></div>`).join(''):'<div class="empty">Nothing scheduled.</div>';
+ $('fullbox').hidden=!full;$('lsub').textContent=inRange?`${TODAY} · ${full?'full day':'English only'}`:'Logging opens on '+C.START;
+ $('save').disabled=!inRange;const t=meS.today;$('save').textContent=t?'Update today\'s log':'Save today\'s log';
  if(t&&!window._filled){window._filled=1;['coding','theory_min','apt_attempted','apt_correct','english_min'].forEach(k=>$(k).value=t[k]);$('notes').value=t.notes||'';if(full)setPrep(t.did_prep?'yes':'no')}
 }
-async function load(){try{render(await FQ.fetchLogs())}catch(e){$('banner').innerHTML=`<div class="banner">Could not load data: ${esc(e.message||e)}. Did you run schema_v2.sql and set the emails in config.js?</div>`}}
+async function load(){try{render(await FQ.fetchLogs())}catch(e){$('banner').innerHTML=`<div class="notice">Could not load data: ${esc(e.message||e)}. Check that schema_v2.sql was run and the emails in config.js are correct.</div>`}}
 (async()=>{
  me=await FQ.guard();if(!me)return;FQ.nav('dashboard',me);
- if(FQ.DEMO)$('banner').innerHTML='<div class="banner">Demo mode: sample data, nothing is saved.</div>';
+ if(FQ.DEMO)$('banner').innerHTML='<div class="notice">Demo mode: sample data, nothing is saved.</div>';
  document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setPrep(b.dataset.v));
  $('save').onclick=async()=>{
   const n=k=>Math.max(0,parseInt($(k).value)||0),full=mode(TODAY)==='full',m=$('msg');

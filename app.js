@@ -1,9 +1,8 @@
 // Shared logic: config, auth, data, scoring, nav. Used by login.html, index.html, calendar.html.
 (function () {
   const C = window.DUEL, Q = new URLSearchParams(location.search);
-  const DEMO = Q.has('demo'), UI = Q.get('ui') || C.UI || 'skill';
-  document.documentElement.dataset.ui = UI;
-  const KEEP = (DEMO ? '?demo' : '') + (Q.get('ui') ? (DEMO ? '&' : '?') + 'ui=' + Q.get('ui') : '');
+  const DEMO = Q.has('demo');
+  const KEEP = DEMO ? '?demo' : '';
   // Today in India time. The database enforces the real date, so changing the phone clock does not help.
   const TODAY = DEMO ? '2026-11-14' : new Date(Date.now() + 19800000).toISOString().slice(0, 10);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -70,16 +69,27 @@
   async function logout() { if (!DEMO) await sb.auth.signOut(); location.replace('login.html' + KEEP) }
 
   // ---------- nav ----------
+  const PATHS = {
+    dash: '<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+    cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+    flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+    trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+    bolt: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+    check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    logo: '<path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.4 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>'
+  };
+  const icon = (n, s) => `<svg class="ic" width="${s || 18}" height="${s || 18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${PATHS[n]}</svg>`;
   function nav(active, me) {
-    const items = [['index.html', 'dashboard', '🏠', 'Dashboard'], ['calendar.html', 'calendar', '📅', 'Calendar']];
+    const items = [['index.html', 'dashboard', 'dash', 'Dashboard'], ['calendar.html', 'calendar', 'cal', 'Calendar']];
     document.getElementById('nav').innerHTML =
-      '<div class="logo"><i>⚔</i><span>Focus Quest</span></div><div class="links">' +
-      items.map(x => `<a class="${x[1] === active ? 'on' : ''}" href="${x[0]}${KEEP}"><em>${x[2]}</em><span>${x[3]}</span></a>`).join('') +
-      '<a href="#" id="lo"><em>🚪</em><span>Log out</span></a></div>' +
-      `<div class="me"><div class="av">${esc(me.name[0])}</div><div><b>${esc(me.name)}</b><small>${DEMO ? 'Demo' : 'Signed in'}</small></div></div>`;
+      `<div class="brand"><span class="mark">${icon('logo', 16)}</span><span>Focus Quest</span></div><div class="links">` +
+      items.map(x => `<a class="${x[1] === active ? 'on' : ''}" href="${x[0]}${KEEP}">${icon(x[2])}<span>${x[3]}</span></a>`).join('') +
+      `<a href="#" id="lo" class="lo">${icon('out')}<span>Log out</span></a></div>` +
+      `<div class="me"><div class="av">${esc(me.name[0])}</div><div><b>${esc(me.name)}</b><small>${DEMO ? 'Demo data' : esc(me.email)}</small></div></div>`;
     document.getElementById('lo').onclick = e => { e.preventDefault(); logout() };
   }
   const dayNo = () => Math.min(Math.max(1, ALLDAYS.indexOf(TODAY) + 1), ALLDAYS.length);
   const daysLeft = () => Math.max(0, Math.round((new Date(C.END + 'T00:00:00Z') - new Date(TODAY + 'T00:00:00Z')) / 864e5));
-  window.FQ = { C, DEMO, UI, KEEP, TODAY, P, ALLDAYS, mode, dayPts, calc, esc, guard, fetchLogs, saveLog, login, logout, nav, dayNo, daysLeft, addDays };
+  window.FQ = { C, DEMO, KEEP, icon, TODAY, P, ALLDAYS, mode, dayPts, calc, esc, guard, fetchLogs, saveLog, login, logout, nav, dayNo, daysLeft, addDays };
 })();

@@ -17,8 +17,7 @@ Pages: `login.html`, `index.html` (scoreboard, today's quests, log form), `calen
 5. Settings, Pages: deploy from `main`, root.
 
 ## Preview without login
-Add `?demo` to any page link, and `&ui=skill` or `&ui=arena` to switch the look, for example `index.html?demo&ui=arena`.
-Set the default look with `UI` in `config.js`.
+Add `?demo` to any page link, for example `index.html?demo`. Light or dark follows the device setting.
 
 ## Points
 Full day: coding 10 each (max 30), aptitude correct 1 each (max 30, +5 at 20+ attempted and 70%+), theory + DS/ML up to 15, English up to 20, full-day bonus +10. Saying "no prep" on a full day scores English only. Light days: English only, max 20. Streak +2 per day (max 20). Missed day: -10 full, -5 light.
