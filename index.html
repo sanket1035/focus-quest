@@ -2,86 +2,107 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Focus Quest</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--tx:#e6edf3;--mut:#8b949e;--a:#2f81f7;--b:#f778ba;--ok:#3fb950;--bad:#f85149}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif}
-.wrap{max-width:1000px;margin:auto;padding:24px 16px}
-h1{margin:0;font-size:28px;font-weight:800}.sub{color:var(--mut);margin:4px 0 24px}
-.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media(max-width:700px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-.p{display:flex;justify-content:space-between;align-items:center}.big{font-size:40px;font-weight:800}
-.lead{font-size:12px;padding:3px 8px;border-radius:99px;background:var(--ok);color:#000;font-weight:600}
-.bar{height:10px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:10px}.bar>i{display:block;height:100%}
-.stats{display:flex;gap:16px;color:var(--mut);font-size:13px;margin-top:10px;flex-wrap:wrap}
-label{display:block;font-size:13px;color:var(--mut);margin-top:10px}
-input,select,textarea{width:100%;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-button{margin-top:14px;width:100%;padding:11px;border:0;border-radius:8px;background:var(--a);color:#fff;font-weight:600;cursor:pointer}
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:7px;border-bottom:1px solid var(--line);text-align:left}
-.spark{display:flex;gap:3px;align-items:flex-end;height:60px;margin-top:12px}.spark i{flex:1;border-radius:3px 3px 0 0;min-height:2px}
-.msg{font-size:13px;margin-top:8px;color:var(--ok)}
-</style></head><body><div class="wrap">
-<h1>Focus Quest</h1><div class="sub" id="sub"></div>
-<div class="grid" id="board"></div>
-<div class="grid" style="margin-top:16px">
- <div class="card"><h3 style="margin-top:0">Log today</h3>
-  <div class="row"><div><label>Player</label><select id="player"></select></div><div><label>Date</label><input type="date" id="day"></div></div>
-  <div class="row"><div><label>Coding solved</label><input type="number" id="coding" min="0" value="0"></div><div><label>Theory + DS/ML minutes</label><input type="number" id="theory_min" min="0" value="0"></div></div>
-  <div class="row"><div><label>Aptitude attempted</label><input type="number" id="apt_attempted" min="0" value="0"></div><div><label>Aptitude correct</label><input type="number" id="apt_correct" min="0" value="0"></div></div>
-  <div class="row"><div><label>English minutes</label><input type="number" id="english_min" min="0" value="0"></div><div><label>Only English today?</label><select id="english_only"><option value="false">No</option><option value="true">Yes</option></select></div></div>
-  <label>What I did (topics, problems)</label><textarea id="notes" rows="2"></textarea>
-  <button id="save">Save log</button><div class="msg" id="msg"></div>
- </div>
- <div class="card"><h3 style="margin-top:0">Rules</h3><table>
-  <tr><td>Coding question</td><td>10 each, max 30</td></tr><tr><td>Aptitude correct</td><td>1 each, max 30</td></tr>
-  <tr><td>20+ attempted at 70%+ accuracy</td><td>+5</td></tr><tr><td>Theory + DS/ML (60 min)</td><td>15</td></tr>
-  <tr><td>English (30 min)</td><td>20</td></tr><tr><td>Only English all day</td><td>+5</td></tr>
-  <tr><td>Full day</td><td>+10</td></tr><tr><td>Streak</td><td>+2/day, max 20</td></tr><tr><td>Missed full day</td><td style="color:var(--bad)">-10</td></tr><tr><td>Light days (3-4 Nov, 15-20 Nov, 23 Nov-4 Dec)</td><td>English 30 min only (max 25), miss = -5</td></tr></table></div>
-</div>
-<div class="card" style="margin-top:16px"><div class="p"><h3 style="margin-top:0">History</h3><button id="exp" style="width:auto;margin:0;padding:6px 12px;background:#30363d">Download CSV backup</button></div><div style="overflow-x:auto"><table id="hist"></table></div></div>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="shell">
+  <nav class="nav" id="nav"></nav>
+  <main class="main">
+    <header class="head">
+      <div class="hello" id="hello"><div><h1 id="hi">Dashboard</h1><p class="sub" id="hsub"></p></div></div>
+      <div id="count"></div>
+    </header>
+    <div id="banner"></div>
+    <section class="kpis" id="kpis"></section>
+    <section class="card">
+      <div class="card-h"><h2>Scoreboard</h2><span class="sub" id="ssub"></span></div>
+      <div id="board"></div>
+    </section>
+    <section class="two">
+      <div class="card">
+        <div class="card-h"><div><h2>Today</h2><p class="sub" id="qsub"></p></div><span id="daytype"></span></div>
+        <div id="quests"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h2>Log today</h2><p class="sub" id="lsub"></p></div></div>
+        <div class="card-b">
+          <div id="fullbox">
+            <label>Did you do your Zensar prep today?</label>
+            <div class="seg" id="seg"><button type="button" data-v="yes">Yes</button><button type="button" data-v="no">No</button></div>
+            <div id="prepbox" hidden>
+              <div class="r2"><div><label>Coding questions solved</label><input id="coding" type="number" min="0" max="30" value="0" inputmode="numeric"></div>
+              <div><label>Theory + DS/ML (min)</label><input id="theory_min" type="number" min="0" max="600" value="0" inputmode="numeric"></div></div>
+              <div class="r2"><div><label>Aptitude attempted</label><input id="apt_attempted" type="number" min="0" max="300" value="0" inputmode="numeric"></div>
+              <div><label>Aptitude correct</label><input id="apt_correct" type="number" min="0" max="300" value="0" inputmode="numeric"></div></div>
+            </div>
+          </div>
+          <label>English speaking (min)</label><input id="english_min" type="number" min="0" max="600" value="0" inputmode="numeric">
+          <label>Notes</label><textarea id="notes" rows="2" placeholder="Optional"></textarea>
+          <button class="btn" id="save">Save</button>
+          <div class="msg" id="msg"></div>
+          <p class="hint">The date is set automatically. You can edit only your own entry for today. Entries cannot be deleted.</p>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="app.js"></script>
 <script>
-const C=window.DUEL,db=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY),$=id=>document.getElementById(id);
-const COL=[getComputedStyle(document.documentElement).getPropertyValue('--a'),getComputedStyle(document.documentElement).getPropertyValue('--b')];
-const iso=d=>d.toISOString().slice(0,10),today=iso(new Date());
-$('player').innerHTML=C.PLAYERS.map(p=>`<option>${p}</option>`).join('');$('day').value=today;
-try{const s=localStorage.getItem('duel-me');if(s)$('player').value=s}catch(e){}
-const mode=d=>C.LIGHT.some(r=>d>=r[0]&&d<=r[1])?'light':'full';
-function dayPts(l){if(mode(l.day)!=='full')return Math.round(Math.min(l.english_min,30)/30*20)+(l.english_only?5:0);let p=Math.min(l.coding,3)*10+Math.min(l.apt_correct,30);
- if(l.apt_attempted>=20&&l.apt_correct/l.apt_attempted>=.7)p+=5;
- p+=Math.round(Math.min(l.theory_min,60)/60*15)+Math.round(Math.min(l.english_min,30)/30*20);
- if(l.english_only)p+=5;if(l.coding>=2&&l.apt_attempted>=20&&l.english_min>=30)p+=10;return p}
-function days(){const out=[],e=new Date(Math.min(new Date(today),new Date(C.END)));for(let d=new Date(C.START);d<=e;d.setDate(d.getDate()+1))out.push(iso(d));return out}
-function score(logs,player){const m={};logs.filter(l=>l.player===player).forEach(l=>m[l.day]=l);
- let tot=0,streak=0,best=0,series=[],c=0,a=0;
- for(const d of days()){const l=m[d];
-  if(l){streak++;const p=dayPts(l)+Math.min(streak*2,20);tot+=p;series.push(p);c+=l.coding;a+=l.english_min}
-  else if(d<today){streak=0;tot-=(mode(d)==='light'?5:10);series.push(0)} else series.push(0);best=Math.max(best,streak)}
- return{tot,streak,best,series,c,a}}
-async function load(){
- const{data,error}=await db.from('logs').select('*').order('day',{ascending:false});
- if(error){$('board').innerHTML=`<div class="card">Database not connected: ${error.message}. Check config.js.</div>`;return}
- const left=Math.max(0,Math.ceil((new Date(C.END)-new Date(today))/864e5));
- $('sub').textContent=`${C.START} to ${C.END} · ${left} days to the drive · 3.5 hrs daily (3 prep + 30 English), light on exam days`;
- const S=C.PLAYERS.map(p=>({p,...score(data,p)})),top=Math.max(...S.map(s=>s.tot),1);
- $('board').innerHTML=S.map((s,i)=>`<div class="card"><div class="p"><h2 style="margin:0">${s.p}</h2>${s.tot===top&&S[0].tot!==S[1].tot?'<span class="lead">LEADING</span>':''}</div>
-  <div class="big">${s.tot}</div><div class="bar"><i style="width:${Math.max(0,s.tot/top*100)}%;background:${COL[i]}"></i></div>
-  <div class="stats"><span>🔥 Streak ${s.streak}</span><span>Best ${s.best}</span><span>Coding ${s.c}</span><span>English ${s.a} min</span></div>
-  <div class="spark">${s.series.slice(-21).map(v=>`<i title="${v}" style="height:${v/155*100}%;background:${COL[i]}"></i>`).join('')}</div></div>`).join('');
- $('hist').innerHTML='<tr><th>Date</th><th>Player</th><th>Code</th><th>Apt</th><th>Theory</th><th>Eng</th><th>Pts</th><th>Notes</th></tr>'+
-  data.map(l=>`<tr><td>${l.day}</td><td>${l.player}</td><td>${l.coding}</td><td>${l.apt_correct}/${l.apt_attempted}</td><td>${l.theory_min}</td><td>${l.english_min}${l.english_only?' ✓':''}</td><td>${dayPts(l)}</td><td>${(l.notes||'').replace(/</g,'&lt;')}</td></tr>`).join('')}
-$('save').onclick=async()=>{const n=k=>Math.max(0,parseInt($(k).value)||0);
- const row={player:$('player').value,day:$('day').value,coding:n('coding'),apt_attempted:n('apt_attempted'),apt_correct:Math.min(n('apt_correct'),n('apt_attempted')),
-  theory_min:n('theory_min'),english_min:n('english_min'),english_only:$('english_only').value==='true',notes:$('notes').value};
- try{localStorage.setItem('duel-me',row.player)}catch(e){}
- const{error}=await db.from('logs').upsert(row,{onConflict:'player,day'});
- $('msg').style.color=error?'var(--bad)':'var(--ok)';$('msg').textContent=error?error.message:`Saved. ${dayPts(row)} points (+ streak bonus).`;load()};
-let ALL=[];const _l=load;
-$('exp').onclick=async()=>{const{data}=await db.from('logs').select('*').order('day');if(!data||!data.length)return;const k=Object.keys(data[0]);
- const csv=[k.join(',')].concat(data.map(r=>k.map(c=>JSON.stringify(r[c]??'')).join(','))).join('\n');
- const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='prep-duel-backup.csv';a.click()};
-load();
+const $=id=>document.getElementById(id),{C,TODAY,P,mode,dayPts,calc,esc,icon}=FQ;
+let me=null,prep=null;
+const COL=['var(--p1)','var(--p2)'];
+function quests(){
+ if(TODAY<C.START)return{sub:`Starts ${C.START}`,list:[],total:''};
+ if(TODAY>C.END)return{sub:'The quest is over',list:[],total:''};
+ if(mode(TODAY)==='light')return{sub:'English speaking only. It still counts for the streak.',list:[['English speaking','Talk out loud, record 2 minutes','30 min']],total:'30 min planned'};
+ return{sub:'3 h 30 min planned',list:[['Aptitude set','Timed, log the wrong answers','40 min'],['Java coding','2 questions, strings or arrays','50 min'],['Theory','OOP, OS or DBMS topic','20 min'],['Project talk','Explain a project in English','10 min'],['Data science and ML','SQL, Python, ML concepts','60 min'],['English speaking','English only with each other','30 min']],total:'3 h 30 min planned'}}
+function setPrep(v){prep=v;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('prepbox').hidden=v!=='yes'}
+function render(logs){
+ const S=P.map(p=>({...p,...calc(logs,p.email)})),meS=S.find(s=>s.email===me.email),other=S.find(s=>s.email!==me.email),
+  rank=[...S].sort((a,b)=>b.tot-a.tot).findIndex(s=>s.email===me.email)+1,full=mode(TODAY)==='full',inRange=TODAY>=C.START&&TODAY<=C.END;
+ $('hello').innerHTML=`${FQ.av(me,60)}<div><h1>Hi, ${esc(me.name)}</h1><p class="sub" id="hsub"></p></div>`;
+ document.getElementById('hsub').textContent=new Date(TODAY+'T00:00:00Z').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+ $('count').innerHTML=TODAY<C.START?`<span class="badge">Starts <b>${C.START}</b></span>`:`<span class="badge">Day <b>${FQ.dayNo()}</b> of ${FQ.ALLDAYS.length} · <b>${FQ.daysLeft()}</b> days left</span>`;
+ const st=meS.today?'<span class="badge ok">Logged</span>':'<span class="badge warn">Not logged</span>';
+ const diff=meS.tot-other.tot;
+ $('kpis').innerHTML=[
+  ['bolt','Your points',meS.tot,diff===0?'Level with '+esc(other.name):(diff>0?`${diff} ahead of ${esc(other.name)}`:`${-diff} behind ${esc(other.name)}`)],
+  ['trophy','Rank','#'+rank,'of 2 players'],
+  ['flame','Current streak',meS.streak+' d','Best '+meS.best+' days'],
+  ['check','Today',inRange?(meS.today?'Logged':'Pending'):'-',inRange?(full?'Full day':'Light day'):'Not started']
+ ].map(k=>`<div class="card kpi"><div class="l">${icon(k[0],15)}${k[1]}</div><div class="v">${k[2]}</div><div class="s">${k[3]}</div></div>`).join('');
+ const total=Math.max(1,S.reduce((a,s)=>a+Math.max(0,s.tot),0));
+ $('ssub').textContent='Share of total points';
+ $('board').innerHTML='<div class="srow shead"><span>Player</span><span>Points</span><span>Share</span><span>Streak</span><span>Best</span><span>Coding</span><span>English</span><span>Today</span></div>'+
+  [...S].sort((a,b)=>b.tot-a.tot).map(s=>{const i=P.findIndex(p=>p.email===s.email),lead=S[0].tot!==S[1].tot&&s.tot===Math.max(S[0].tot,S[1].tot);
+   const t=!inRange?'':(s.today?'<span class="badge ok">Logged today</span>':'<span class="badge warn">Not logged yet</span>');
+   return `<div class="srow" style="--c:${COL[i]}"><div class="pl">${FQ.av(s,34)}<span>${esc(s.name)}${s.email===me.email?'<small>you</small>':''}${lead?'<span class="lead-tag">Leading</span>':''}</span></div>
+   <div class="num pts">${s.tot}</div><div class="bar"><i style="width:${Math.max(0,s.tot)/total*100}%"></i></div>
+   <div class="meta"><span class="num">${s.streak} d<span class="lab"> streak</span></span><span class="num m4">${s.best} d</span><span class="num m4">${s.coding}</span><span class="num m4">${s.eng} m</span></div><div class="td">${t}</div></div>`}).join('');
+ const q=quests();$('qsub').textContent=q.sub;
+ $('daytype').innerHTML=inRange?`<span class="badge">${full?'Full day':'Light day'}</span>`:'';
+ $('quests').innerHTML=q.list.length?q.list.map(x=>`<div class="todo"><span class="ck"></span><div>${x[0]}<small>${x[1]}</small></div><span class="t">${x[2]}</span></div>`).join(''):'<div class="empty">Nothing scheduled.</div>';
+ $('fullbox').hidden=!full;$('lsub').textContent=inRange?`${TODAY} · ${full?'full day':'English only'}`:'Logging opens on '+C.START;
+ $('save').disabled=!inRange;const t=meS.today;$('save').textContent=t?'Update today\'s log':'Save today\'s log';
+ if(t&&!window._filled){window._filled=1;['coding','theory_min','apt_attempted','apt_correct','english_min'].forEach(k=>$(k).value=t[k]);$('notes').value=t.notes||'';if(full)setPrep(t.did_prep?'yes':'no')}
+}
+async function load(){try{render(await FQ.fetchLogs())}catch(e){$('banner').innerHTML=`<div class="notice">Could not load data: ${esc(e.message||e)}. Check that schema_v2.sql was run and the emails in config.js are correct.</div>`}}
+(async()=>{
+ me=await FQ.guard();if(!me)return;FQ.nav('dashboard',me);
+ if(FQ.DEMO)$('banner').innerHTML='<div class="notice">Demo mode: sample data, nothing is saved.</div>';
+ document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setPrep(b.dataset.v));
+ $('save').onclick=async()=>{
+  const n=k=>Math.max(0,parseInt($(k).value)||0),full=mode(TODAY)==='full',m=$('msg');
+  if(full&&!prep){m.className='msg bad';m.textContent='Choose Yes or No for today\'s Zensar prep.';return}
+  const did=full&&prep==='yes';
+  const row={did_prep:did,coding:did?n('coding'):0,apt_attempted:did?n('apt_attempted'):0,apt_correct:did?n('apt_correct'):0,theory_min:did?n('theory_min'):0,english_min:n('english_min'),notes:$('notes').value};
+  if(row.apt_correct>row.apt_attempted){m.className='msg bad';m.textContent='Aptitude correct cannot be more than attempted.';return}
+  const r=await FQ.saveLog(row,me);
+  if(r&&r.error){m.className='msg bad';m.textContent=r.error.message;return}
+  m.className='msg ok';m.textContent=`Saved. ${dayPts({...row,day:TODAY})} points today, plus streak bonus.`;window._filled=0;load()};
+ load();
+})();
 </script></body></html>
