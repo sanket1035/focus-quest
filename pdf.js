@@ -177,20 +177,20 @@
     ];
 
     let rowY = 34;
-    const rowHeight = 11.5;
+    const rowHeight = opts.isDaily ? 9.2 : 11.5;
 
     rows.forEach(([k, v]) => {
       // Key
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
+      doc.setFontSize(opts.isDaily ? 9.5 : 10);
       doc.setTextColor(...PALETTE.muted);
-      doc.text(k, 24, rowY + 7.5);
+      doc.text(k, 24, rowY + (opts.isDaily ? 6.5 : 7.5));
 
       // Value
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
+      doc.setFontSize(opts.isDaily ? 9.5 : 10);
       doc.setTextColor(...PALETTE.ink);
-      doc.text(String(v || '-'), 75, rowY + 7.5);
+      doc.text(String(v || '-'), 75, rowY + (opts.isDaily ? 6.5 : 7.5));
 
       // Bottom hairline
       rowY += rowHeight;
@@ -198,6 +198,79 @@
       doc.setLineWidth(pt2mm(0.4));
       doc.line(24, rowY, 186, rowY);
     });
+
+    // DAILY REPORT ONLY: between the key/value list and the four stats on page 2,
+    // add a block "TODAY'S STUDY": the topics text from notes (wrapped, 11 pt, as bullet lines if the notes contain commas or line breaks)
+    // and a small minutes table with rows Theory + DS/ML, English speaking, Total minutes (theory_min + english_min), minutes right aligned.
+    if (opts.isDaily && opts.log) {
+      let curY = rowY + 9;
+
+      // Block header
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...PALETTE.olive);
+      doc.text("TODAY'S STUDY", 24, curY, { charSpace: 1.2 });
+      curY += 6;
+
+      // Topics text from notes
+      const rawNotes = (opts.log.notes ? opts.log.notes.trim() : '');
+      let bullets = [];
+      if (rawNotes.includes('\n') || rawNotes.includes(',')) {
+        bullets = rawNotes.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+      } else if (rawNotes) {
+        bullets = [rawNotes];
+      }
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(...PALETTE.ink);
+
+      if (!bullets.length) {
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(...PALETTE.muted);
+        doc.text('No notes added.', 24, curY);
+        curY += 7;
+      } else {
+        const hasDelim = rawNotes.includes('\n') || rawNotes.includes(',');
+        bullets.forEach(b => {
+          const bulletLine = (hasDelim ? '•  ' : '') + b;
+          const split = doc.splitTextToSize(bulletLine, 162);
+          split.forEach(l => {
+            doc.text(l, 24, curY);
+            curY += 5.2;
+          });
+        });
+        curY += 3;
+      }
+
+      // Small minutes table
+      const thMin = opts.log.theory_min || 0;
+      const enMin = opts.log.english_min || 0;
+      const totMin = thMin + enMin;
+
+      doc.autoTable({
+        startY: curY + 2,
+        body: [
+          ['Theory + DS/ML', `${thMin} min`],
+          ['English speaking', `${enMin} min`],
+          ['Total minutes', `${totMin} min`]
+        ],
+        theme: 'plain',
+        styles: {
+          font: 'helvetica',
+          fontSize: 9,
+          textColor: PALETTE.ink,
+          lineColor: PALETTE.rowLine,
+          lineWidth: pt2mm(0.4),
+          cellPadding: { top: 2.2, bottom: 2.2, left: 0, right: 0 }
+        },
+        columnStyles: {
+          0: { cellWidth: 110, fontStyle: 'normal' },
+          1: { cellWidth: 52, halign: 'right', fontStyle: 'bold' }
+        },
+        margin: { left: 24, right: 24 }
+      });
+    }
 
     // At the bottom four stats (times bold 26 pt number over 8 pt label): Points, Current streak, Days logged, Missed days
     const statsList = [
@@ -289,7 +362,8 @@
       reportType: 'Daily study report',
       reportDateOrPeriod: shortDate,
       competingWith: otherPlayer ? otherPlayer.name : 'None',
-      stats: myStats
+      stats: myStats,
+      log: log
     });
 
     // Page 3: Study Summary, Points, and What I Studied
