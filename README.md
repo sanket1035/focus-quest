@@ -14,7 +14,7 @@ Pages: `login.html`, `index.html` (scoreboard, today's quests, log form), `calen
 2. Authentication, Users: add the two users with email and password (tick auto-confirm).
 3. Authentication, Sign In / Providers: turn off "Allow new users to sign up".
 4. Put the two emails (lowercase) in `config.js` under `PLAYERS`.
-5. Settings, Pages: deploy from `main`, root.
+5. Settings, Pages: Source = `GitHub Actions`.
 
 ## Preview without login
 Add `?demo` to any page link, for example `index.html?demo`. Light or dark follows the device setting.
