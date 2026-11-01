@@ -22,14 +22,21 @@
     </section>
     <section class="two">
       <div class="card">
-        <div class="card-h"><div><h2>Today</h2><p class="sub" id="qsub"></p></div><span id="daytype"></span></div>
+        <div class="card-h">
+          <div><h2>Today</h2><p class="sub" id="qsub"></p></div>
+          <div class="toolbar">
+            <span id="daytype"></span>
+            <select id="report-date" title="Select logged day"></select>
+            <button class="btn sec" id="download-daily-pdf">Download daily report (PDF)</button>
+          </div>
+        </div>
         <div id="quests"></div>
       </div>
       <div class="card">
         <div class="card-h"><div><h2>Log today</h2><p class="sub" id="lsub"></p></div></div>
         <div class="card-b">
           <div id="fullbox">
-            <label>Did you do your Zensar prep today?</label>
+            <label>Did you do your placement prep today?</label>
             <div class="seg" id="seg"><button type="button" data-v="yes">Yes</button><button type="button" data-v="no">No</button></div>
             <div id="prepbox" hidden>
               <div class="r2"><div><label>Coding questions solved</label><input id="coding" type="number" min="0" max="5" value="0" inputmode="numeric"></div>
@@ -39,7 +46,7 @@
             </div>
           </div>
           <label>English speaking (min)</label><input id="english_min" type="number" min="0" max="60" value="0" inputmode="numeric">
-          <label>Notes</label><textarea id="notes" rows="2" placeholder="Optional"></textarea>
+          <label>What did you study today?</label><textarea id="notes" rows="2" placeholder="Topics, chapters, problems solved"></textarea>
           <button class="btn" id="save">Save</button>
           <div class="msg" id="msg"></div>
           <p class="hint">The date is set automatically. You can edit only your own entry for today. Entries cannot be deleted.</p>
@@ -51,9 +58,12 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="pdf.js"></script>
 <script>
 const $=id=>document.getElementById(id),{C,TODAY,P,mode,dayPts,calc,esc,icon}=FQ;
-let me=null,prep=null;
+let me=null,prep=null,CURRENT_LOGS=[];
 const COL=['var(--p1)','var(--p2)'];
 function quests(){
  if(TODAY<C.START)return{sub:`Starts ${C.START}`,list:[],total:''};
@@ -89,15 +99,36 @@ function render(logs){
  $('fullbox').hidden=!full;$('lsub').textContent=inRange?`${TODAY} · ${full?'full day':'English only'}`:'Logging opens on '+C.START;
  $('save').disabled=!inRange;const t=meS.today;$('save').textContent=t?'Update today\'s log':'Save today\'s log';
  if(t&&!window._filled){window._filled=1;['coding','theory_min','apt_attempted','apt_correct','english_min'].forEach(k=>$(k).value=t[k]);$('notes').value=t.notes||'';if(full)setPrep(t.did_prep?'yes':'no')}
+
+ const myLogs=logs.filter(l=>l.player===me.email);
+ const loggedDays=myLogs.map(l=>l.day).sort((a,b)=>b.localeCompare(a));
+ const pdfBtn=$('download-daily-pdf'),dateSel=$('report-date');
+ if(!loggedDays.length){
+  dateSel.innerHTML='<option value="">No logs</option>';
+  dateSel.disabled=true;
+  pdfBtn.disabled=true;
+  pdfBtn.title='Log a day first';
+ } else {
+  dateSel.disabled=false;
+  const def=loggedDays.includes(TODAY)?TODAY:loggedDays[0];
+  dateSel.innerHTML=loggedDays.map(d=>`<option value="${d}" ${d===def?'selected':''}>${d}</option>`).join('');
+  pdfBtn.disabled=false;
+  pdfBtn.title='';
+ }
 }
-async function load(){try{render(await FQ.fetchLogs())}catch(e){$('banner').innerHTML=`<div class="notice">Could not load data: ${esc(e.message||e)}. Check that schema_v2.sql was run and the emails in config.js are correct.</div>`}}
+async function load(){try{CURRENT_LOGS=await FQ.fetchLogs();render(CURRENT_LOGS)}catch(e){$('banner').innerHTML=`<div class="notice">Could not load data: ${esc(e.message||e)}. Check that schema_v2.sql was run and the emails in config.js are correct.</div>`}}
 (async()=>{
  me=await FQ.guard();if(!me)return;FQ.nav('dashboard',me);
  if(FQ.DEMO)$('banner').innerHTML='<div class="notice">Demo mode: sample data, nothing is saved.</div>';
  document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>setPrep(b.dataset.v));
+ $('download-daily-pdf').onclick=()=>{
+  const d=$('report-date').value;
+  if(!d)return;
+  FQ.downloadDailyReport(me,d,CURRENT_LOGS);
+ };
  $('save').onclick=async()=>{
   const n=k=>Math.max(0,parseInt($(k).value)||0),full=mode(TODAY)==='full',m=$('msg');
-  if(full&&!prep){m.className='msg bad';m.textContent='Choose Yes or No for today\'s Zensar prep.';return}
+  if(full&&!prep){m.className='msg bad';m.textContent='Choose Yes or No for today\'s placement prep.';return}
   const did=full&&prep==='yes';
   const row={did_prep:did,coding:did?n('coding'):0,apt_attempted:did?n('apt_attempted'):0,apt_correct:did?n('apt_correct'):0,theory_min:did?n('theory_min'):0,english_min:n('english_min'),notes:$('notes').value};
   const LIM={coding:5,theory_min:120,apt_attempted:60,apt_correct:60,english_min:60},bad=Object.keys(LIM).find(k=>row[k]>LIM[k]);
