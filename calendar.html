@@ -17,7 +17,7 @@
       <div class="card"><div class="card-h"><h2>Players</h2></div><div id="stats"></div></div>
     </section>
     <section class="card" style="margin-top:16px">
-      <div class="card-h"><h2>All logs</h2><div class="toolbar"><select id="who"><option value="">Everyone</option></select><button class="btn sec" id="exp">Export CSV</button></div></div>
+      <div class="card-h"><h2>All logs</h2><div class="toolbar"><select id="who"><option value="">Everyone</option></select><button class="btn sec" id="exp">Export CSV</button><button class="btn sec" id="pdf">Download PDF</button></div></div>
       <div class="tw"><table id="hist"></table></div>
       <details><summary>How points work</summary><table class="rules">
         <tr><td>Coding question</td><td>10 each, max 30</td></tr><tr><td>Aptitude correct</td><td>1 each, max 30. +5 if 20+ attempted at 70% or better</td></tr>
@@ -30,6 +30,9 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="pdf.js"></script>
 <script>
 const $=id=>document.getElementById(id),{C,TODAY,P,mode,dayPts,calc,esc}=FQ;
 const COL=['var(--p1)','var(--p2)'];let LOGS=[];
@@ -54,6 +57,7 @@ function render(logs){LOGS=logs;
  if(FQ.DEMO)$('banner').innerHTML='<div class="notice">Demo mode: sample data.</div>';
  $('exp').onclick=()=>{if(!LOGS.length)return;const k=Object.keys(LOGS[0]),csv=[k.join(',')].concat(LOGS.map(r=>k.map(c=>JSON.stringify(r[c]??'')).join(','))).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='focus-quest-backup.csv';a.click()};
+ $('pdf').onclick=()=>{if(!LOGS.length)return;FQ.downloadAllLogsReport(me,$('who').value,LOGS)};
  try{render(await FQ.fetchLogs())}catch(e){$('banner').innerHTML=`<div class="notice">Could not load data: ${esc(e.message||e)}</div>`}
 })();
 </script></body></html>

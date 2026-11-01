@@ -84,7 +84,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--tx);box-shadow:0 0 0 
 table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:11px 16px;text-align:left;white-space:nowrap;border-top:1px solid var(--border)}
 th{color:var(--mut);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--surface2)}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .tw{overflow-x:auto}details{padding:0 20px}summary{cursor:pointer;color:var(--mut);padding:14px 0;font-size:13px}.rules td{white-space:normal;padding:9px 0;border-top:1px solid var(--border)}.rules{margin-bottom:12px}
-.toolbar{display:flex;gap:8px;align-items:center}.toolbar select{width:auto;height:32px;font-size:13px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar select{width:auto;height:32px;font-size:13px}
+@media(max-width:480px){
+ .card-h{flex-direction:column;align-items:flex-start;gap:12px}
+ .toolbar{flex-direction:column;align-items:stretch;width:100%;gap:8px}
+ .toolbar select,.toolbar .btn{width:100%;text-align:center}
+}
 /* auth */
 body.auth{display:grid;place-items:center;min-height:100vh;padding:20px}
 .authcard{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:32px}
