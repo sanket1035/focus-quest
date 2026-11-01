@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Focus Quest · Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="shell">
+  <nav class="nav" id="nav"></nav>
+  <main class="main">
+    <header class="head"><div><h1>Streak calendar</h1><p class="sub">Every day needs a log from both of you. Moon days need only 30 min of English.</p></div><div class="hr"><span class="pill" id="count"></span></div></header>
+    <div id="banner"></div>
+    <section class="two cal2">
+      <div class="card"><div class="cal" id="cal"></div>
+        <div class="legend"><span><i class="dot ok" style="--c:var(--p1)"></i>Logged</span><span><i class="dot miss"></i>Missed</span><span><i class="dot pending"></i>Today, not yet</span><span>🌙 Light day</span></div></div>
+      <div class="card" id="stats"></div>
+    </section>
+    <section class="card" style="margin-top:16px"><div class="row-between"><h3>All logs</h3><button class="btn sec" id="exp">Download CSV</button></div>
+      <details><summary>How points work</summary><table class="rules">
+        <tr><td>Coding question</td><td>10 each, max 30</td></tr><tr><td>Aptitude correct</td><td>1 each, max 30; +5 if 20+ attempted at 70%+</td></tr>
+        <tr><td>Theory + DS/ML (60 min)</td><td>15</td></tr><tr><td>English (30 min)</td><td>20</td></tr>
+        <tr><td>Full day bonus (2+ coding, 20+ aptitude, 30 min English)</td><td>+10</td></tr><tr><td>Said "no prep" on a full day</td><td>English points only</td></tr>
+        <tr><td>Streak</td><td>+2 per day, max 20</td></tr><tr><td>Missed day</td><td>-10 full day, -5 light day</td></tr></table></details>
+      <div class="scroll"><table id="hist"></table></div></section>
+  </main>
+</div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="app.js"></script>
+<script>
+const $=id=>document.getElementById(id),{C,TODAY,P,mode,dayPts,calc,esc}=FQ;
+const COL=['var(--p1)','var(--p2)'];let LOGS=[];
+const nameOf=e=>(P.find(p=>p.email===e)||{name:e}).name;
+function render(logs){LOGS=logs;
+ const S=P.map(p=>({...p,...calc(logs,p.email)}));
+ $('count').innerHTML=TODAY<C.START?`Starts <b>${C.START}</b>`:`Day <b>${FQ.dayNo()}</b> of ${FQ.ALLDAYS.length}`;
+ const lead0=(new Date(C.START+'T00:00:00Z').getUTCDay()+6)%7;
+ let h='Mon Tue Wed Thu Fri Sat Sun'.split(' ').map(x=>`<div class="h">${x}</div>`).join('')+'<div class="cd empty"></div>'.repeat(lead0);
+ h+=FQ.ALLDAYS.map(d=>{const dots=S.map((s,i)=>`<i class="dot ${s.status[d]==='ok'?'ok':s.status[d]==='miss'?'miss':s.status[d]==='pending'?'pending':''}" style="--c:${COL[i]}"></i>`).join('');
+  return `<div class="cd ${mode(d)==='light'?'light':''} ${d===TODAY?'today':''}"><b>${+d.slice(8)}</b><small>${mode(d)==='light'?'🌙':'&nbsp;'}</small><div class="dots">${dots}</div></div>`}).join('');
+ $('cal').innerHTML=h;
+ $('stats').innerHTML='<h3>Stats</h3>'+S.map((s,i)=>`<div class="stat" style="--c:${COL[i]}"><div class="av">${esc(s.name[0])}</div><div class="sn"><b>${esc(s.name)}</b><small>${s.tot} points</small></div><div class="sv"><span>🔥 ${s.streak}</span><span>Best ${s.best}</span><span>Logged ${s.logged}</span><span>Missed ${s.missed}</span></div></div>`).join('');
+ $('hist').innerHTML='<tr><th>Date</th><th>Player</th><th>Prep</th><th>Code</th><th>Apt</th><th>Theory</th><th>Eng</th><th>Pts</th><th>Notes</th></tr>'+logs.slice().sort((a,b)=>b.day.localeCompare(a.day)||a.player.localeCompare(b.player)).map(l=>`<tr><td>${l.day}</td><td>${esc(nameOf(l.player))}</td><td>${mode(l.day)==='light'?'-':(l.did_prep?'Yes':'No')}</td><td>${l.coding}</td><td>${l.apt_correct}/${l.apt_attempted}</td><td>${l.theory_min}</td><td>${l.english_min}</td><td>${dayPts(l)}</td><td>${esc(l.notes)}</td></tr>`).join('')}
+(async()=>{
+ const me=await FQ.guard();if(!me)return;FQ.nav('calendar',me);
+ if(FQ.DEMO)$('banner').innerHTML='<div class="banner">Demo mode: sample data.</div>';
+ $('exp').onclick=()=>{if(!LOGS.length)return;const k=Object.keys(LOGS[0]),csv=[k.join(',')].concat(LOGS.map(r=>k.map(c=>JSON.stringify(r[c]??'')).join(','))).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='focus-quest-backup.csv';a.click()};
+ try{render(await FQ.fetchLogs())}catch(e){$('banner').innerHTML=`<div class="banner">Could not load data: ${esc(e.message||e)}</div>`}
+})();
+</script></body></html>
